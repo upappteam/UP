@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}
+Register
+{% endblock %}
+{% block aside %}
+<aside>
+	<form method='POST'>
+		
+			
+		<h4>{{ form.phone_number.label  }}</h4> 
+		{{ form.phone_number }}
+		{% if form.phone_number.errors %}
+		{% for error in form.phone_number.errors %}
+			<div>
+				<p>{{ error }}</p>
+			</div>
+		{% endfor %}
+		{% endif %}
+		<hr>
+		<h4>{{ form.upline_phone_number.label  }}</h4> 
+		{{ form.upline_phone_number }}
+		<hr>
+		<h4>{{ form.password.label  }}</h4> 
+		{{ form.password}}
+		<hr>
+		{{ form.submit}}
+	</form>
+</aside>
+{% endblock %}
+
