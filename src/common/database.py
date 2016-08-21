@@ -24,5 +24,9 @@ class Database(object):
         return Database.DATABASE[collection].find_one(query)
 
     @staticmethod
-    def update(collection, data):
-        Database.DATABASE[collection].update(data, upsert=True)
+    def update(collection, query, data):
+        Database.DATABASE[collection].update(query, data, upsert=True)
+
+    @classmethod
+    def remove(cls, collection, query):
+        Database.DATABASE[collection].remove(query)

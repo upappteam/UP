@@ -3,7 +3,8 @@ import datetime
 from werkzeug.security import check_password_hash, generate_password_hash
 
 from src.common.database import Database
-# import src.users.constants as UserConstants
+import src.users.constants as UserConstants
+import src.users.errors as UserError
 
 
 class User(object):
@@ -40,7 +41,7 @@ class User(object):
         }
 
     def save_to_db(self):
-        Database.insert(collection='users', data=self.json())
+        Database.insert(collection=UserConstants.COLLECTION, data=self.json())
 
     def set_password(self, password):
         self.password = generate_password_hash(password, salt_length=32)
@@ -51,26 +52,16 @@ class User(object):
 
     @classmethod
     def get_by_phone(cls, phone_number):
-        user_data = Database.find_one('users', {"phone_number": phone_number})
-        return cls(phone_number=user_data['phone_number'],
-                   password=user_data['password'],
-                   upline_phone_number=user_data['upline_phone_number'],
-                   company = user_data['company'],
-                   email = user_data['email'],
-                   name = user_data['name'],
-                   family_name = user_data['family_name'],
-                   birthday = user_data['birthday'],
-                   register_date = user_data['register_date'],
-                   _id = user_data['_id']
-                   )
+        user_data = Database.find_one(UserConstants.COLLECTION, {"phone_number": phone_number})
+        return cls(**user_data)
 
     @classmethod
     def get_by_id(cls, _id):
-        return cls(**Database.find_one('users', {"_id": _id}))
+        return cls(**Database.find_one(UserConstants.COLLECTION, {"_id": _id}))
 
     @classmethod
     def get_by_email(cls, email):
-        return cls(**Database.find('users', {"email": email}))
+        return cls(**Database.find(UserConstants.COLLECTION, {"email": email}))
 
     @classmethod
     def find_uplines(cls, phone_number):
@@ -85,3 +76,25 @@ class User(object):
         # if upline.phone_number == '' or upline.phone_number == None:
         #     break
         return counter, upline_list
+
+    @staticmethod
+    def remove_by_id(_id):
+        Database.remove(UserConstants.COLLECTION, {"_id": _id})
+
+    @staticmethod
+    def register_user(phone_number, password, upline_phone_number):
+        user_data = Database.find_one(UserConstants.COLLECTION, {"phone_number": phone_number})
+        upline = Database.find_one(UserConstants.COLLECTION,
+                                   {"upline_phone_number": upline_phone_number})
+
+        if user_data is not None:
+            raise UserError.UserAlreadyRegisteredError("This user already exist.")
+
+        if upline is None:
+            raise UserError.UplineNotExistsError("The upline phone number is wrong.")
+
+        User(phone_number=phone_number,
+             password=password,
+             upline_phone_number=upline_phone_number).save_to_db()
+
+        return True

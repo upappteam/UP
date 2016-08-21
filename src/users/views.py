@@ -1,7 +1,8 @@
 from flask import Blueprint, render_template, request, session
 
-from src.users.forms import RegisterForm
 from src.users.models import User
+from src.users.forms import RegisterForm
+import src.users.errors as UserError
 
 
 bp_user = Blueprint('users', __name__)
@@ -11,13 +12,17 @@ bp_user = Blueprint('users', __name__)
 def register():
     form = RegisterForm()
     if request.method == 'POST':
-        new_user = User(phone_number=form.phone_number.data,
-                        upline_phone_number=form.upline_phone_number.data,
-                        password=form.password.data)
+        phone_number = form.phone_number.data
+        password = form.password.data
+        upline_phone_number = form.upline_phone_number.data
 
-        # session['name'] = new_user.name
-        new_user.save_to_db()
-        return render_template('index.html')
+        try:
+            if User.register_user(phone_number=phone_number,password=password,
+                                  upline_phone_number=upline_phone_number):
+
+                return render_template('index.html')
+        except UserError.UserError as e:
+            return e.message
     else:
         return render_template('user/register.html', form=form)
 
