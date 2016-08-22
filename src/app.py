@@ -1,7 +1,7 @@
-from flask import Flask
+from flask import Flask, render_template
 
 from src.users.views import bp_user
-from src.common.database import Database
+# from src.common.database import Database
 
 
 app = Flask(__name__)
@@ -12,6 +12,10 @@ app.secret_key = app.config['SECRET_KEY']
 app.register_blueprint(bp_user, url_prefix='/users')
 
 
-@app.before_first_request
-def initialize():
-    Database.initialize()
+@app.route('/')
+def index():
+    return render_template('index.html')
+
+# @app.before_first_request
+# def initialize():
+#     Database.initialize()
