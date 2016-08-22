@@ -1,6 +1,6 @@
 from flask import Blueprint, request, render_template, flash, redirect, url_for
-from src.users.forms import RegisterForm
 
+from src.users.forms import RegisterForm
 from src.users.models import User
 
 
@@ -20,6 +20,9 @@ def register():
         if new_user.register(password, upline_phone_number):
             # flash('Registration successful.')
 
+            # if user of the upline phone number exist make a relationship between them
+            if new_user.find_upline(upline_phone_number):
+                new_user.connect_to_upline()
             return redirect(url_for('index'))
 
         else:
