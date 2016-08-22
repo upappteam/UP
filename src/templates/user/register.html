@@ -1,29 +1,48 @@
 {% extends "base.html" %}
+
 {% block title %}
-Register
+    Register
 {% endblock %}
+
 {% block aside %}
 <aside>
 	<form method='POST'>
-		
+		<!--error handled for Data Required-->
 			
-		<h4>{{ form.phone_number.label  }}</h4> 
+		<h4>{{ form.phone_number.label  }}</h4>
+        {% if form.phone_number.errors %}
+            {% for error in form.phone_number.errors %}
+                <p>{{ error }}</p>
+            {% endfor %}
+        {% endif %}
 		{{ form.phone_number }}
-		{% if form.phone_number.errors %}
-		{% for error in form.phone_number.errors %}
-			<div>
-				<p>{{ error }}</p>
-			</div>
-		{% endfor %}
-		{% endif %}
 		<hr>
-		<h4>{{ form.upline_phone_number.label  }}</h4> 
+		<h4>{{ form.upline_phone_number.label  }}</h4>
+        {% if form.upline_phone_number.errors %}
+            {% for error in form.upline_phone_number.errors %}
+                <p>{{ error }}</p>
+            {% endfor %}
+        {% endif %}
 		{{ form.upline_phone_number }}
 		<hr>
-		<h4>{{ form.password.label  }}</h4> 
+		<h4>{{ form.password.label  }}</h4>
+        {% if form.password.errors %}
+            {% for error in form.password.errors %}
+                <p>{{ error }}</p>
+            {% endfor %}
+        {% endif %}
 		{{ form.password}}
 		<hr>
+        <h4>{{ form.password_c.label  }}</h4>
+        {% if form.password_c.errors %}
+            {% for error in form.password_c.errors %}
+                <p>{{ error }}</p>
+            {% endfor %}
+        {% endif %}
+		{{ form.password_c}}
+		<hr>
 		{{ form.submit}}
+
 	</form>
 </aside>
 {% endblock %}
