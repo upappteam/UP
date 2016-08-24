@@ -20,8 +20,7 @@ class User:
                               property_value=self.phone_number)
         return user
 
-    def register(self, password, upline_phone_number, company=None, gender=None,
-                 email=None, name=None, family_name=None, birthday=None, bio=None):
+    def register(self, password, upline_phone_number):
 
         if not self.find():
             register_date = khayyam.JalaliDate.today().strftime("%A %d %B %Y")
@@ -29,9 +28,8 @@ class User:
 
             user = Node('User', phone_number=self.phone_number,
                         password=generate_password_hash(password, salt_length=32),
-                        upline_phone_number=upline_phone_number,  family_name=family_name,
-                        company=company, email=email, birthday=birthday, bio=bio,
-                        register_date=register_date, _id=_id, name=name, gender=gender)
+                        upline_phone_number=upline_phone_number,
+                        register_date=register_date, _id=_id)
 
             graph.create(user)
             return True
