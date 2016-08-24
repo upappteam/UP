@@ -20,8 +20,8 @@ class User:
                               property_value=self.phone_number)
         return user
 
-    def register(self, password, upline_phone_number, company=None,
-                 email=None, family_name=None, birthday=None):
+    def register(self, password, upline_phone_number, company=None, gender=None,
+                 email=None, name=None, family_name=None, birthday=None, bio=None):
 
         if not self.find():
             register_date = khayyam.JalaliDate.today().strftime("%A %d %B %Y")
@@ -30,8 +30,8 @@ class User:
             user = Node('User', phone_number=self.phone_number,
                         password=generate_password_hash(password, salt_length=32),
                         upline_phone_number=upline_phone_number,  family_name=family_name,
-                        company=company, email=email, birthday=birthday,
-                        register_date=register_date, _id=_id)
+                        company=company, email=email, birthday=birthday, bio=bio,
+                        register_date=register_date, _id=_id, name=name, gender=gender)
 
             graph.create(user)
             return True
@@ -66,3 +66,40 @@ class User:
 
         else:
             return False
+
+    @staticmethod
+    def find_by_id(_id):
+        user = graph.find_one(label='User',
+                              property_key='_id',
+                              property_value=_id)
+        if user:
+            return user
+
+    def change_password(self, password):
+        user = self.find()
+        user["password"] = generate_password_hash(password)
+        user.push()
+        return True
+
+    def update_info(self, company=None, gender=None, email=None,
+                    name=None, family_name=None, birthday=None, bio=None):
+
+        user = self.find()
+        user["name"] = name
+        user["family_name"] = family_name
+        user["company"] = company
+        user["gender"] = gender
+        user["email"] = email
+        user["birthday"] = birthday
+        user["bio"] = bio
+        user.push()
+        return True
+
+    @staticmethod
+    def find_by_phone_number(phone_number):
+        user = graph.find_one(label='User',
+                              property_key='phone_number',
+                              property_value=phone_number)
+
+        if user:
+            return user

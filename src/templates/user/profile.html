@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Profile
+{% endblock %}
+
+{% block header %}
+    <div class="header-container">
+        <header class="wrapper clearfix">
+            <h1 class="title">Network Marketing</h1>
+            <nav>
+                <ul>
+                    {% if loged_in %}<li><a href="{{ url_for('users.login') }}">Log in</a></li>{% endif %}
+                    {% if not loged_in %}<li><a href="{{ url_for('users.profile', user_id=user_id) }}">Profile</a></li>{% endif %}
+                    {% if not loged_in %}<li><a href="{{ url_for('users.home', user_id=user_id) }}">Home</a></li>{% endif %}
+                    {% if loged_in %}<li><a href="{{ url_for('users.register') }}">Register</a></li>{% endif %}
+                </ul>
+            </nav>
+        </header>
+    </div>
+    <div class="flash">
+        <div>
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                    <ul class=flashes>
+                        {% for message in messages %}
+                            <li>{{ message }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            {% endwith %}
+        </div>
+    </div>
+{% endblock %}
+
+{% block article %}
+    <article>
+        <header>
+            <h3>Profile Info</h3>
+            <a href="{{ url_for('users.change_pw') }}"><button>Change Password</button></a>
+        </header>
+        <section>
+            <form method="POST">
+                <ul>
+                    <li>
+                        <div>
+                           <p>{% if form.name.data is not none %}{{ form.name.data }}{% endif %}</p>
+                            <p>{{ form.name.label }}</p>
+                            <p>{{ form.name }}</p>
+                     </div>
+                    </li>
+                    <li>
+                        <div>
+                            <p>{% if form.family_name.data %}{{ form.family_name.data }}{% endif %}</p>
+                            <p>{{ form.family_name.label }}</p>
+                            <p>{{ form.family_name }}</p>
+                        </div>
+                    </li>
+                    <li>
+                        <div>
+                            <p>{% if form.email.data %}{{ form.email.data }}{% endif %}</p>
+                            <p>{{ form.email.label }}</p>
+                            <p>{{ form.email }}</p>
+                        </div>
+                    </li>
+                    <li>
+                        <div>
+                            <p>{{ form.company.label }}</p>
+                            <p>{{ form.company }}</p>
+                        </div>
+                    </li>
+                    <li>
+                        <div>
+                            <p>{{ form.gender.label }}</p>
+                            <p>{{ form.gender }}</p>
+                        </div>
+                    </li>
+                    <li>
+                        <div>
+                            <p>{% if form.birthday_day.data %}{{ form.birthday_day.data }}{% endif %}</p>
+                            <p>{{ form.birthday_day.label }}</p>
+                            <p>{{ form.birthday_day }}</p>
+                        </div>
+                    </li>
+                    <li>
+                        <div>
+                            <p>{% if form.bio.data %}{{ form.bio.data }}{% endif %}</p>
+                            <p>{{ form.bio.label }}</p>
+                            <p>{{ form.bio }}</p>
+                        </div>
+                    </li>
+                </ul>
+                    {{ form.submit }}
+
+
+            </form>
+        </section>
+    </article>
+{% endblock %}
+
+{% block aside %}
+
+{% endblock %}

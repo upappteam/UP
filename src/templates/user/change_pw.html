@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Change Password
+{% endblock %}
+
+{% block article %}
+    <article>
+        <header>
+            <h3>Change Password</h3>
+        </header>
+        <form method="POST">
+            <ul>
+                <li>
+                    <section>
+                        <div>
+                            <p>{{ form_pw.current_password.label }}</p>
+                            <p>{{ form_pw.current_password }}</p>
+                        </div>
+                    </section>
+                </li>
+                <li>
+                    <section>
+                        <div>
+                            <p>{{ form_pw.new_password.label }}</p>
+                            <p>{{ form_pw.new_password }}</p>
+                        </div>
+                    </section>
+                </li>
+                <li>
+                    <section>
+                        <div>
+                            <p>{{ form_pw.confirm_password.label }}</p>
+                            <p>{{ form_pw.confirm_password }}</p>
+                        </div>
+                    </section>
+                </li>
+            </ul>
+
+            {{ form_pw.submit }}
+
+        </form>
+    </article>
+{% endblock %}
+
+{% block aside %}
+
+{% endblock %}

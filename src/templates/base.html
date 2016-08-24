@@ -20,13 +20,26 @@
                     <h1 class="title">Network Marketing</h1>
                     <nav>
                         <ul>
-                            {% if not loged_in %}<li><a href="{{ url_for('users.login') }}">Log in</a></li>{% endif %}
-                            {% if loged_in %}<li><a href="#">Profile</a></li>{% endif %}
-                            {% if loged_in %}<li><a href="#">Home</a></li>{% endif %}
-                            {% if not loged_in %}<li><a href="{{ url_for('users.register') }}">Register</a></li>{% endif %}
+                            {% if loged_in %}<li><a href="{{ url_for('users.login') }}">Log in</a></li>{% endif %}
+                            {% if not loged_in %}<li><a href="{{ url_for('users.profile', user_id=user_id) }}">Profile</a></li>{% endif %}
+                            {% if not loged_in %}<li><a href="{{ url_for('users.home', user_id=user_id) }}">Home</a></li>{% endif %}
+                            {% if loged_in %}<li><a href="{{ url_for('users.register') }}">Register</a></li>{% endif %}
                         </ul>
                     </nav>
                 </header>
+            </div>
+            <div class="flash">
+                <div>
+                    {% with messages = get_flashed_messages() %}
+                        {% if messages %}
+                            <ul class=flashes>
+                                {% for message in messages %}
+                                    <li>{{ message }}</li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+                    {% endwith %}
+                </div>
             </div>
         {% endblock %}
         <div class="main-container">
