@@ -1,103 +1,127 @@
-import os
 import khayyam
-from uuid import uuid4
+import uuid
 from py2neo import Graph, Node, Relationship
-from py2neo.ext.calendar import GregorianCalendar
-from werkzeug.security import generate_password_hash, check_password_hash
+
+import src.users.constants as UserConst
+from src.users.utils import Utils
 
 
 graph = Graph()
 
 
-class User:
+class User(object):
 
-    def __init__(self, phone_number):
+    def __init__(self, phone_number, upline_phone_number, password, company='None',
+                 gender='None', email='None', name='None', family='None',
+                 birthday='None', register_date=None, _id=None):
+
         self.phone_number = phone_number
+        self.upline_phone_number = upline_phone_number
+        self.password = password
+        self.company = company
+        self.gender = gender
+        self.email = email
+        self.name = name
+        self.family = family
+        self.birthday = birthday
+        self.register_date = khayyam.JalaliDate.today().strftime("%A %d %B %Y") if register_date is None else register_date
+        self._id = uuid.uuid4().hex if _id is None else _id
 
-    def find(self):
-        user = graph.find_one(label='User',
-                              property_key='phone_number',
-                              property_value=self.phone_number)
-        return user
+    @classmethod
+    def find_one(cls, phone_number):
+        user_data = graph(UserConst.USER, property_key='phone_number',
+                          property_value=phone_number)
+        return cls(phone_number=user_data["phone_number"],
+                   upline_phone_number=user_data["upline_phone_number"],
+                   password=user_data["password"],
+                   company=user_data["company"],
+                   gender=user_data["gender"],
+                   email=user_data["email"],
+                   name=user_data["name"],
+                   family=user_data["family"],
+                   birthday=user_data["birthday"],
+                   register_date=user_data["register_date"],
+                   _id=user_data["_id"])
 
-    def register(self, password, upline_phone_number):
+    def register(self):
+        user_date = graph(UserConst.USER, 'phone_number', self.phone_number)
+        if not user_date:
+            new_user = Node(UserConst.USER,
+                            phone_number=self.phone_number,
+                            upline_phone_number=self.upline_phone_number,
+                            password=self.password,
+                            company=self.company,
+                            gender=self.gender,
+                            email=self.email,
+                            name=self.name,
+                            family=self.family,
+                            birthday=self.birthday,
+                            register_date=self.register_date,
+                            _id=self._id)
 
-        if not self.find():
-            register_date = khayyam.JalaliDate.today().strftime("%A %d %B %Y")
-            _id = uuid4().hex
+            graph.create(new_user)
 
-            user = Node('User', phone_number=self.phone_number,
-                        password=generate_password_hash(password, salt_length=32),
-                        upline_phone_number=upline_phone_number,
-                        register_date=register_date, _id=_id)
-
-            graph.create(user)
             return True
         return False
-
-    def verify_password(self, password):
-        user = self.find()
-
-        if user is not None:
-            return check_password_hash(user["password"], password)
-
-        return False
-
-    @staticmethod
-    def find_upline(upline_phone_number):
-        upline = graph.find_one('User', 'phone_number', upline_phone_number)
-
-        if upline is not None:
-            return upline
-
-        else:
-            return False
 
     def connect_to_upline(self):
-        user = self.find()
-        upline = self.find_upline(user["upline_phone_number"])
+        user = User.find_one(self.phone_number)
+        upline = User.find_one(self.upline_phone_number)
 
-        if upline and user["phone_number"] != upline["phone_number"]:
-            upline_relationship = Relationship(upline, "DIRECT", user)
-            graph.create(upline_relationship)
+        if user.phone_number != upline.phone_number:
+            rel = Relationship(upline, "DIRECT", user)
+            graph.create(rel)
+
             return True
 
-        else:
-            return False
+        return False
 
-    @staticmethod
-    def find_by_id(_id):
-        user = graph.find_one(label='User',
-                              property_key='_id',
-                              property_value=_id)
-        if user:
-            return user
+    @classmethod
+    def find_by_id(cls, _id):
+        user_data = graph(UserConst.USER, property_key='_id', property_value=_id)
+        if user_data:
+            return cls(phone_number=user_data["phone_number"],
+                       upline_phone_number=user_data["upline_phone_number"],
+                       password=user_data["password"],
+                       company=user_data["company"],
+                       gender=user_data["gender"],
+                       email=user_data["email"],
+                       name=user_data["name"],
+                       family=user_data["family"],
+                       birthday=user_data["birthday"],
+                       register_date=user_data["register_date"],
+                       _id=user_data["_id"])
 
-    def change_password(self, password):
-        user = self.find()
-        user["password"] = generate_password_hash(password)
-        user.push()
+    def update_info(self, email, password):
+        user_data = graph(UserConst.USER, property_key='phone_number',
+                          property_value=self.phone_number)
+
+        user_data["email"] = email
+        user_data["password"] = Utils.set_password(password)
+
+        user_data.push()
         return True
 
-    def update_info(self, company=None, gender=None, email=None,
-                    name=None, family_name=None, birthday=None, bio=None):
+    @staticmethod
+    def valid_phone_number(phone_number):
+        user = User.find_one(phone_number)
+        if user.phone_number:
+            return True
+        return False
 
-        user = self.find()
+    def profile(self, name, family, gender, company, email, birthday):
+        user = graph(UserConst.USER, 'phone_number', self.phone_number)
         user["name"] = name
-        user["family_name"] = family_name
-        user["company"] = company
+        user["family"] = family
         user["gender"] = gender
+        user["company"] = company
         user["email"] = email
         user["birthday"] = birthday
-        user["bio"] = bio
+
         user.push()
-        return True
 
-    @staticmethod
-    def find_by_phone_number(phone_number):
-        user = graph.find_one(label='User',
-                              property_key='phone_number',
-                              property_value=phone_number)
+    def change_password(self, new_password):
+        user = graph(UserConst.USER, 'phone_number', self.phone_number)
+        user["password"] = Utils.set_password(new_password)
 
-        if user:
-            return user
+        user.push()

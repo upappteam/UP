@@ -31,7 +31,7 @@ class LoginForm(Form):
 
 class ChangePasswordForm(Form):
     current_password = PasswordField(label='Current Password',
-                             validators=[validators.optional()])
+                                     validators=[validators.optional()])
     new_password = PasswordField(label='New Password',
                                  validators=[validators.optional()])
     confirm_password = PasswordField('Confirm Password',
@@ -54,5 +54,4 @@ class ProfileForm(Form):
                                    ('Panbe riz', 'Panbe riz')])
     birthday_day = StringField(label='Birthday', validators=[validators.optional()])
     bio = TextAreaField(label='Bio', validators=[validators.optional()])
-    submit = SubmitField('Save',
-                         validators=[validators.DataRequired()])
+    submit = SubmitField('Save', validators=[validators.DataRequired()])
