@@ -3,3 +3,12 @@
 {% block title %}
     Home
 {% endblock %}
+
+{% block article %}
+    <article>
+        <header>
+            <h1>Hello {{ name }}</h1>
+        </header>
+    <a href="{{ url_for('change_pw', user_id=user_id) }}">change password</a>
+    </article>
+{% endblock %}
