@@ -29,24 +29,29 @@ class User(object):
 
         self._id = uuid.uuid4().hex if _id is None else _id
 
+    @staticmethod
+    def find_one_static(phone_number):
+        user_data = graph.find_one(UserConst.USER, 'phone_number', phone_number)
+        return user_data
+
     @classmethod
-    def find_one(cls, phone_number):
-        user_data = graph(UserConst.USER, property_key='phone_number',
-                          property_value=phone_number)
-        return cls(phone_number=user_data["phone_number"],
-                   upline_phone_number=user_data["upline_phone_number"],
-                   password=user_data["password"],
-                   company=user_data["company"],
-                   gender=user_data["gender"],
-                   email=user_data["email"],
-                   name=user_data["name"],
-                   family=user_data["family"],
-                   birthday=user_data["birthday"],
-                   register_date=user_data["register_date"],
-                   _id=user_data["_id"])
+    def find_one_class(cls, phone_number):
+        user_data = User.find_one_static(phone_number)
+        if user_data:
+            return cls(phone_number=user_data["phone_number"],
+                       upline_phone_number=user_data["upline_phone_number"],
+                       password=user_data["password"],
+                       company=user_data["company"],
+                       gender=user_data["gender"],
+                       email=user_data["email"],
+                       name=user_data["name"],
+                       family=user_data["family"],
+                       birthday=user_data["birthday"],
+                       register_date=user_data["register_date"],
+                       _id=user_data["_id"])
 
     def register(self):
-        user_date = graph(UserConst.USER, 'phone_number', self.phone_number)
+        user_date = graph.find_one(UserConst.USER, 'phone_number', self.phone_number)
         if not user_date:
             new_user = Node(UserConst.USER,
                             phone_number=self.phone_number,
@@ -80,7 +85,7 @@ class User(object):
 
     @classmethod
     def find_by_id(cls, _id):
-        user_data = graph(UserConst.USER, property_key='_id', property_value=_id)
+        user_data = graph.find_one(UserConst.USER, property_key='_id', property_value=_id)
         if user_data:
             return cls(phone_number=user_data["phone_number"],
                        upline_phone_number=user_data["upline_phone_number"],
@@ -106,8 +111,8 @@ class User(object):
 
     @staticmethod
     def valid_phone_number(phone_number):
-        user = User.find_one(phone_number)
-        if user.phone_number:
+        user = User.find_one_static(phone_number)
+        if user:
             return True
         return False
 

@@ -35,7 +35,6 @@
     <article>
         <header>
             <h3>Profile Info</h3>
-            <a href="{{ url_for('users.change_pw') }}"><button>Change Password</button></a>
         </header>
         <section>
             <form method="POST">
@@ -80,13 +79,7 @@
                             <p>{{ form.birthday_day }}</p>
                         </div>
                     </li>
-                    <li>
-                        <div>
-                            <p>{% if form.bio.data %}{{ form.bio.data }}{% endif %}</p>
-                            <p>{{ form.bio.label }}</p>
-                            <p>{{ form.bio }}</p>
-                        </div>
-                    </li>
+
                 </ul>
                     {{ form.submit }}
 
