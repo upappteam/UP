@@ -12,21 +12,22 @@ bp_user = Blueprint('users', __name__)
 def login():
     form = LoginForm()
     if request.method == 'POST':
-        if form.validate_on_submit():
-            phone_number = form.phone_number.data
-            password = form.password.data
+        phone_number = form.phone_number.data
+        password = form.password.data
 
-            user = User.find_one_class(phone_number)
-            if user.valid_phone_number(phone_number):
-                if Utils.check_password(user.password, password):
-                    flash("Log in successful.")
-                    return redirect(url_for('users.home', user_id=user._id))
-                else:
-                    flash("Your password was wrong.")
-                    return redirect(url_for('users.login'))
+        user_data = User.find_one(phone_number)
+        user = User.classify1(user_data)
+        if user.valid_phone_number(phone_number):
+            if Utils.check_password(user.password, password):
+                flash("Log in successful.")
+                session["email"] = user.email
+                return redirect(url_for('users.home', user_id=user._id))
             else:
-                flash("The user does not exist.")
-                return redirect(url_for('login'))
+                flash("Your password was wrong.")
+                return redirect(url_for('users.login'))
+        else:
+            flash("The user does not exist.")
+            return redirect(url_for('login'))
     return render_template('user/login.html', form=form)
 
 
@@ -34,25 +35,24 @@ def login():
 def register():
     form = RegisterForm()
     if request.method == 'POST':
-        if form.validate_on_submit():
-            phone_number = form.phone_number.data
-            upline_phone_number = form.upline_phone_number.data
-            password = form.password.data
-            password_c = form.password_c.data
+        phone_number = form.phone_number.data
+        upline_phone_number = form.upline_phone_number.data
+        password = form.password.data
+        password_c = form.password_c.data
 
-            if not User.valid_phone_number(phone_number):
-                if User.valid_phone_number(upline_phone_number) and password == password_c:
-                    new_user = User(phone_number=phone_number,
-                                    upline_phone_number=upline_phone_number,
-                                    password=Utils.set_password(password),)
-                    new_user.register()
-                    new_user.connect_to_upline()
+        if not User.valid_phone_number(phone_number):
+            if User.valid_phone_number(upline_phone_number) and password == password_c:
+                new_user = User(phone_number=phone_number,
+                                upline_phone_number=upline_phone_number,
+                                password=Utils.set_password(password),)
+                new_user.register()
+                new_user.connect_to_upline()
 
-                    return redirect(url_for('users.info', user_id=new_user._id))
+                return redirect(url_for('users.info', user_id=new_user._id))
 
-            else:
-                flash("User exists with this phone number.")
-                return redirect(url_for('register'))
+        else:
+            flash("User exists with this phone number.")
+            return redirect(url_for('register'))
 
     return render_template('user/register.html', form=form)
 
@@ -64,17 +64,17 @@ def info(user_id):
     if user.name == 'None':
         form = ProfileForm()
         if request.method == 'POST':
-            if form.validate_on_submit():
-                email = form.email.data
-                name = form.name.data
-                family = form.family_name.data
-                gender = form.gender.data
-                company = form.company.data
-                birthday = form.birthday_day.data
+            email = form.email.data
+            name = form.name.data
+            family = form.family_name.data
+            gender = form.gender.data
+            company = form.company.data
+            birthday = form.birthday_day.data
 
-                user.profile(name, family, gender, company, email, birthday)
+            user.profile(name, family, gender, company, email, birthday)
+            session["email"] = user.email
 
-                return redirect(url_for('users.home', user_id=user._id))
+            return redirect(url_for('users.home', user_id=user._id))
 
         return render_template('user/profile.html', form=form)
 
@@ -82,22 +82,21 @@ def info(user_id):
         form = ChangePasswordForm()
 
         if request.method == 'POST':
-            if form.validate_on_submit():
-                current_password = form.current_password
-                new_password = form.new_password.data
-                confirm_password = form.confirm_password.data
+            current_password = form.current_password
+            new_password = form.new_password.data
+            confirm_password = form.confirm_password.data
 
-                if Utils.check_password(user.password, current_password):
-                    if new_password == confirm_password:
-                        user.change_password(new_password)
-                        flash("Your password changed.")
-                        return redirect(url_for('users.home', user_id=user._id))
-                    else:
-                        flash("The confirm password not matched.")
-                        return redirect(url_for('users.info', user_id=user._id))
+            if Utils.check_password(user.password, current_password):
+                if new_password == confirm_password:
+                    user.change_password(new_password)
+                    flash("Your password changed.")
+                    return redirect(url_for('users.home', user_id=user._id))
                 else:
-                    flash("Your current password is wrong.")
+                    flash("The confirm password not matched.")
                     return redirect(url_for('users.info', user_id=user._id))
+            else:
+                flash("Your current password is wrong.")
+                return redirect(url_for('users.info', user_id=user._id))
         return render_template('user/change_pw.html', form_pw=form)
 
 
@@ -112,23 +111,22 @@ def change_password(user_id):
     user = User.find_by_id(user_id)
     form = ChangePasswordForm()
     if request.method == 'POST':
-        if form.validate_on_submit():
-            current_password = form.current_password.data
-            new_password = form.new_password.data
-            confirm_password = form.confirm_password.data
+        current_password = form.current_password.data
+        new_password = form.new_password.data
+        confirm_password = form.confirm_password.data
 
-            if Utils.check_password(user.password, current_password):
-                if new_password == confirm_password:
-                    user.change_password(new_password)
-                    flash("Your password changed.")
-                    return redirect(url_for('users.home', user_id=user._id))
-
-                else:
-                    flash("The confirm password not matched.")
-                    return redirect(url_for('users.change_password', user_id=user._id))
+        if Utils.check_password(user.password, current_password):
+            if new_password == confirm_password:
+                user.change_password(new_password)
+                flash("Your password changed.")
+                return redirect(url_for('users.home', user_id=user._id))
 
             else:
-                flash("your current password is wrong.")
+                flash("The confirm password not matched.")
                 return redirect(url_for('users.change_password', user_id=user._id))
+
+        else:
+            flash("your current password is wrong.")
+            return redirect(url_for('users.change_password', user_id=user._id))
 
     return render_template('user/change_pw.html', form=form)

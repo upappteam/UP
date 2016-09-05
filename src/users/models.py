@@ -38,20 +38,32 @@ class User(object):
         return user_data
 
     @classmethod
-    def find_one_class(cls, phone_number):
-        user_data = User.find_one(phone_number)
-        if user_data:
-            return cls(phone_number=user_data["phone_number"],
-                       upline_phone_number=user_data["upline_phone_number"],
-                       password=user_data["password"],
-                       company=user_data["company"],
-                       gender=user_data["gender"],
-                       email=user_data["email"],
-                       name=user_data["name"],
-                       family=user_data["family"],
-                       birthday=user_data["birthday"],
-                       register_date=user_data["register_date"],
-                       _id=user_data["_id"])
+    def classify1(cls, user_data):
+        return cls(phone_number=user_data["phone_number"],
+                   upline_phone_number=user_data["upline_phone_number"],
+                   password=user_data["password"],
+                   company=user_data["company"],
+                   gender=user_data["gender"],
+                   email=user_data["email"],
+                   name=user_data["name"],
+                   family=user_data["family"],
+                   birthday=user_data["birthday"],
+                   register_date=user_data["register_date"],
+                   _id=user_data["_id"])
+
+    @classmethod
+    def classify2(cls, user_data):
+        return cls(phone_number=user_data.phone_number,
+                   upline_phone_number=user_data["upline_phone_number"],
+                   password=user_data["password"],
+                   company=user_data["company"],
+                   gender=user_data["gender"],
+                   email=user_data["email"],
+                   name=user_data["name"],
+                   family=user_data["family"],
+                   birthday=user_data["birthday"],
+                   register_date=user_data["register_date"],
+                   _id=user_data["_id"])
 
     def register(self):
         user_date = User.find_one(self.phone_number)

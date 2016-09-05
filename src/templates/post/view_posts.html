@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block title %}
+    View Posts
+{% endblock %}
+
+{% block article %}
+    <article>
+        <div class="container">
+            <a href="{{ url_for('posts.new_post') }}"><button class="btn btn-success">New post</button></a>
+        </div>
+        {% if posts|length > 0 %}
+            {% for post in posts %}
+                <div class="container">
+                    <h3>{{ post.subject }}</h3>
+                    <div>
+                        <p>Author: {{ post.user_email }}</p>
+                    </div>
+                    <div>
+                        <p>Published at: {{ post.date }}</p>
+                        <p>Content: {{ post.content }}</p>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="container">
+                <h4>There is no post yet!</h4>
+            </div>
+        {% endif %}
+    </article>
+{% endblock %}

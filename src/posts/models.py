@@ -5,16 +5,15 @@ from py2neo import Graph, Relationship, Node
 from src.users.models import User
 
 
-uri = "http://localhost:7474/db/data/"
-graph = Graph(uri)
+graph = Graph()
 
 
 class Post(object):
 
-    def __init__(self, user_email, subject, text, publish_date=None, _id=None):
+    def __init__(self, user_email, subject, content, publish_date=None, _id=None):
         self.user_email = user_email
         self.subject = subject
-        self.text = text
+        self.content = content
         self.publish_date = khayyam.JalaliDatetime.today().strftime("%Y-%m-%d %H:%M:%S") if publish_date is None else publish_date
         self._id = uuid.uuid4().hex if _id is None else _id
 
@@ -31,7 +30,7 @@ class Post(object):
 
     @classmethod
     def find_all_by_email(cls, user_email):
-        posts = graph.find('Post', property_key="user", property_value=user_email)
+        posts = graph.find('Post', property_key="user_email", property_value=user_email)
 
         return [cls(**post_data) for post_data in posts]
 
@@ -39,7 +38,7 @@ class Post(object):
         user_node = User.find_by_email(self.user_email)
         new_post = Node("Post", user_email=self.user_email,
                         subject=self.subject,
-                        text=self.text,
+                        content=self.content,
                         publish_date=self.publish_date,
                         _id=self._id)
         graph.create(new_post)
