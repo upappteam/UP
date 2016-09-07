@@ -1,5 +1,5 @@
-import khayyam
 import uuid
+import khayyam3
 from py2neo import Graph, Node, Relationship
 
 import src.users.constants as UserConst
@@ -24,7 +24,7 @@ class User(object):
         self.name = name
         self.family = family
         self.birthday = birthday
-        self.register_date = khayyam.JalaliDatetime.today().strftime("%Y-%m-%d %H:%M:%S") if register_date is None else register_date
+        self.register_date = khayyam3.JalaliDatetime.today().strftime("%Y-%m-%d %H:%M:%S") if register_date is None else register_date
         self._id = uuid.uuid4().hex if _id is None else _id
 
     @staticmethod

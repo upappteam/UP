@@ -17,8 +17,12 @@
                         <p>Author: {{ post.user_email }}</p>
                     </div>
                     <div>
-                        <p>Published at: {{ post.date }}</p>
+                        <p>Published at: {{ post.publish_date }}</p>
                         <p>Content: {{ post.content }}</p>
+                    </div>
+                    <div>
+                        <a href="{{ url_for('posts.edit_post', post_id=post._id) }}"><button class="btn btn-success">Edit</button></a>
+                        <a href="{{ url_for('posts.delete_post', post_id=post._id) }}"><button class="btn btn-danger">Delete</button></a>
                     </div>
                 </div>
             {% endfor %}

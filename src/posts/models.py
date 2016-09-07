@@ -1,5 +1,6 @@
 import uuid
-import khayyam
+import khayyam3
+import py2neo
 from py2neo import Graph, Relationship, Node
 
 from src.users.models import User
@@ -14,7 +15,7 @@ class Post(object):
         self.user_email = user_email
         self.subject = subject
         self.content = content
-        self.publish_date = khayyam.JalaliDatetime.today().strftime("%Y-%m-%d %H:%M:%S") if publish_date is None else publish_date
+        self.publish_date = khayyam3.JalaliDatetime.today().strftime("%Y-%m-%d %H:%M:%S") if publish_date is None else publish_date
         self._id = uuid.uuid4().hex if _id is None else _id
 
     @staticmethod
@@ -44,3 +45,19 @@ class Post(object):
         graph.create(new_post)
         rel = Relationship(user_node, "PUBLISHED", new_post)
         graph.create(rel)
+
+    @staticmethod
+    def delete(_id, user):
+        post = Post.find_one(_id)
+        rel = graph.match_one(user, "PUBLISHED", post)
+
+        graph.separate(rel)
+        graph.delete(post)
+
+    @staticmethod
+    def edit(_id, subject, content):
+        post = Post.find_one(_id)
+        post["subject"] = subject
+        post["content"] = content
+        post["publish_date"] = khayyam3.JalaliDatetime.today().strftime("%Y-%m-%d %H:%M:%S")
+        post.push()

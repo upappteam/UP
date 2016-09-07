@@ -72,7 +72,7 @@ def info(user_id):
             birthday = form.birthday_day.data
 
             user.profile(name, family, gender, company, email, birthday)
-            session["email"] = user.email
+            session["email"] = email
 
             return redirect(url_for('users.home', user_id=user._id))
 

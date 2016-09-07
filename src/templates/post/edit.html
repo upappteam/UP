@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Edit post
+{% endblock %}
+
+{% block article %}
+    <article>
+        <div class="container">
+            <form action="" method="POST">
+                <div>
+                    {{ form.subject.label }}
+                    {{ form.subject }}
+                </div>
+                <div>
+                    {{ form.content.label }}
+                    {{ form.content }}
+                </div>
+                {{ form.submit }}
+            </form>
+        </div>
+    </article>
+{% endblock %}

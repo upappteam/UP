@@ -9,3 +9,11 @@ class PostForm(Form):
     content = TextAreaField(label='Post', validators=[validators.DataRequired("The text post.")])
 
     submit = SubmitField(label='Publish')
+
+
+class EditForm(Form):
+
+    subject = StringField(label='Subject', validators=[validators.DataRequired("The post subject.")])
+    content = TextAreaField(label='Post', validators=[validators.DataRequired("The text post.")])
+
+    submit = SubmitField(label='Edit')
