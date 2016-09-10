@@ -1,4 +1,4 @@
-import khayyam
+# import khayyam
 from flask_wtf import Form
 from wtforms import validators, StringField, PasswordField, SubmitField, SelectField, FormField, TextAreaField
 

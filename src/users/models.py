@@ -148,3 +148,39 @@ class User(object):
         user["password"] = Utils.set_password(new_password)
 
         user.push()
+
+    @staticmethod
+    def find_sub(email):
+        user = User.find_by_email(email)
+
+        sub_list = [sub_user for sub_user in graph.find(UserConst.USER,
+                                                        property_key="upline_phone_number",
+                                                        property_value=user["phone_number"])]
+        if sub_list:
+            main = sub_list[:]
+
+            while True:
+                sub = sub_list[0]
+                sub_list = sub_list[1:]
+                sub_list += [sub_user for sub_user in graph.find(UserConst.USER,
+                                                                 property_key="upline_phone_number",
+                                                                 property_value=sub["phone_number"]) if sub_user is not None]
+
+                main += sub_list
+                if sub_list is None or len(sub_list) < 1:
+                    main = set(main)
+                    break
+            if main:
+                for i in main:
+                    print(i["phone_number"])
+                count = len(main)
+                print(count)
+                return main, count
+
+        else:
+            print("You have not subset yet!")
+            return None
+        # print(graph.degree(user))
+        # some = graph.match(user, "DIRECT")
+        # for s in some:
+            # print(s.end_node()["phone_number"])
