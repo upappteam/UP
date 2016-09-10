@@ -20,23 +20,23 @@
 {% block aside %}
     <aside>
         <h2>Log in</h2>
-        <form method="POST">
+        <form method="POST" action="">
             <h4>{{ form.phone_number.label  }}</h4>
                 {% if form.phone_number.errors %}
                     {% for error in form.phone_number.errors %}
                         <p>{{ error }}</p>
                     {% endfor %}
                 {% endif %}
-		        {{ form.phone_number }}
-		    <hr>
+                {{ form.phone_number }}
+            <hr>
             <h4>{{ form.password.label  }}</h4>
                 {% if form.password.errors %}
                     {% for error in form.password.errors %}
                         <p>{{ error }}</p>
                     {% endfor %}
                 {% endif %}
-		        {{ form.password }}
-		    <hr>
+                {{ form.password }}
+            <hr>
 
             {{ form.submit }}
 

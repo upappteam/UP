@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block title %}
+    New Post
+{% endblock %}
+
+{% block article %}
+    <article>
+        <header>
+            <h2>New post</h2>
+        </header>
+        <div class="container">
+            <form method="POST" action="">
+                <div>
+                    {{ form.subject.label }}
+                    {{ form.subject }}
+                </div>
+                <div>
+                    {{ form.content.label }}
+                    {{ form.content }}
+                </div>
+                <div>
+                    {{ form.submit }}
+                </div>
+            </form>
+        </div>
+    </article>
+{% endblock %}
