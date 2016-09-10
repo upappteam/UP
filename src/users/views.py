@@ -136,3 +136,4 @@ def change_password(user_id):
             return redirect(url_for('users.change_password', user_id=user._id))
 
     return render_template('user/change_pw.html', form=form)
+
