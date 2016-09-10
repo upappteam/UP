@@ -179,8 +179,4 @@ class User(object):
 
         else:
             print("You have not subset yet!")
-            return None
-        # print(graph.degree(user))
-        # some = graph.match(user, "DIRECT")
-        # for s in some:
-            # print(s.end_node()["phone_number"])
+            return None, None

@@ -103,8 +103,13 @@ def info(user_id):
 @bp_user.route('/home/<string:user_id>')
 def home(user_id):
     user = User.find_by_id(user_id)
-    User.find_sub(user.email)
-    return render_template('user/home.html', user_id=user._id, name=user.name)
+    main, count = User.find_sub(user.email)
+    if not isinstance(main, set):
+        return render_template('user/home.html', user_id=user._id,
+                           name=user.name, count=0)
+
+    return render_template('user/home.html', user_id=user._id,
+                           name=user.name, count=count, main=main)
 
 
 @bp_user.route('/change_password/<string:user_id>', methods=['GET', 'POST'])
