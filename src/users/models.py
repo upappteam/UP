@@ -72,10 +72,10 @@ class User(object):
         return False
 
     def connect_to_upline(self):
-        user = User.find_one(self.phone_number)
-        upline = User.find_one(self.upline_phone_number)
+        user = graph.find_one(UserConst.USER, 'phone_number', self.phone_number)
+        upline = graph.find_one(UserConst.USER, 'phone_number', self.upline_phone_number)
 
-        if user.phone_number != upline.phone_number:
+        if user["phone_number"] != upline["phone_number"]:
             rel = Relationship(upline, "DIRECT", user)
             graph.create(rel)
 
@@ -117,7 +117,7 @@ class User(object):
         return False
 
     def profile(self, name, family, gender, company, email, birthday):
-        user = graph(UserConst.USER, 'phone_number', self.phone_number)
+        user = graph.find_one(UserConst.USER, 'phone_number', self.phone_number)
         user["name"] = name
         user["family"] = family
         user["gender"] = gender
@@ -128,7 +128,7 @@ class User(object):
         user.push()
 
     def change_password(self, new_password):
-        user = graph(UserConst.USER, 'phone_number', self.phone_number)
+        user = graph.find_one(UserConst.USER, 'phone_number', self.phone_number)
         user["password"] = Utils.set_password(new_password)
 
         user.push()

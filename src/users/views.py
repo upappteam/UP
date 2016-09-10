@@ -39,12 +39,14 @@ def register():
         password_c = form.password_c.data
 
         if not User.valid_phone_number(phone_number):
-            if User.valid_phone_number(upline_phone_number) and password == password_c:
-                new_user = User(phone_number=phone_number,
-                                upline_phone_number=upline_phone_number,
-                                password=Utils.set_password(password),)
-                new_user.register()
-                return redirect(url_for('users.info', user_id=new_user._id))
+            if User.valid_phone_number(upline_phone_number):
+                if password == password_c:
+                    new_user = User(phone_number=phone_number,
+                                    upline_phone_number=upline_phone_number,
+                                    password=Utils.set_password(password),)
+                    new_user.register()
+                    new_user.connect_to_upline()
+                    return redirect(url_for('users.info', user_id=new_user._id))
 
         else:
             flash("User exists with this phone number.")
@@ -53,7 +55,7 @@ def register():
     return render_template('user/register.html', form=form)
 
 
-@bp_user.route('/info/<string:user_id>')
+@bp_user.route('/info/<string:user_id>', methods=['GET', 'POST'])
 def info(user_id):
     user = User.find_by_id(user_id)
 
