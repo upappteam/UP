@@ -1,6 +1,6 @@
 # import khayyam
 from flask_wtf import Form
-from wtforms import validators, StringField, PasswordField, SubmitField, SelectField, FormField, TextAreaField
+from wtforms import validators, StringField, PasswordField, SubmitField, SelectField, TextAreaField
 
 
 # date_regex = '^(?:(?:31(\/|-|\.)(?:0?[123456]|(?:Farvardin|Ordibehesht|Khordad|Tir|Mordad|Shahrivar)))\1|(?:(?:29|30)(\/|-|\.)(?:0?[1-9]|1[0-2]|(?:Farvardin|Ordibehesht|Khordad|Tir|Mordad|Shahrivar|Mehr|Aban|Azar|Dey|Bahman|Esfand))\2))(?:(?:1[3-4]|[2-9]\d)?\d{2})$|^(?:29(\/|-|\.)(?:0?2|(?:Feb))\3(?:(?:(?:1[6-9]|[2-9]\d)?(?:0[48]|[2468][048]|[13579][26])|(?:(?:16|[2468][048]|[3579][26])00))))$|^(?:0?[1-9]|1\d|2[0-8])(\/|-|\.)(?:(?:0?[1-9]|(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep))|(?:1[0-2]|(?:Oct|Nov|Dec)))\4(?:(?:1[6-9]|[2-9]\d)?\d{2})$$|^(?:29(\/|-|\.)(?:0?2|(?:Feb))\3(?:(?:(?:1[6-9]|[2-9]\d)?(?:0[48]|[2468][048]|[13579][26])|(?:(?:16|[2468][048]|[3579][26])00))))$|^(?:0?[1-9]|1\d|2[0-8])(\/|-|\.)(?:(?:0?[1-9]|(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep))|(?:1[0-2]|(?:Oct|Nov|Dec)))\4(?:(?:1[3-4]|[2-9]\d)?\d{2})$'

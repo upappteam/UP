@@ -10,7 +10,8 @@
             <h1>Hello {{ name }}</h1>
         </header>
         <div class="container">
-            <p>Number of your subset is: {{ count }}</p>
+            <p>Number of your subset is: {{ count_sub }}</p>
+            <p>Number of your upline is: {{ count_up }}</p>
         </div>
         <div class="container">
             <a href="{{ url_for('users.change_password', user_id=user_id) }}">change password</a>
@@ -18,12 +19,12 @@
         <div class="container">
             <a href="{{ url_for('posts.view_posts', user_id=user_id) }}">View posts</a>
         </div>
-        {% if main|length > 0 %}
+        {% if sub|length > 0 %}
             <div class="container">
                 <h4>Your subset are:</h4>
             </div>
             <div class="container">
-                {% for user in main %}
+                {% for user in sub %}
                     <p>
                         Name: {{ user["name"] }}
                         <br>
@@ -39,6 +40,38 @@
             </div>
         {% else %}
             <p>You have not subset yet!</p>
+            <p>You have not upline!</p>
         {% endif %}
     </article>
+{% endblock %}
+
+{% block aside %}
+    <aside>
+        {% if up|length > 0 %}
+            <div class="container">
+                <h4>Your uplines are:</h4>
+            </div>
+            <div class="container">
+                {% for user in up %}
+                    <p>
+                        Name: {{ user["name"] }}
+                        <br>
+                        Family: {{ user["family"] }}
+                        <br>
+                        Phone number: {{ user["phone_number"] }}
+                        <br>
+                        Upline phone number: {{ user["upline_phone_number"] }}
+
+                    </p>
+                    <hr>
+                {% endfor %}
+                <p>Your level is {{ count_up }}</p>
+            </div>
+        {% else %}
+            <div class="container">
+                <p>You are <strong>HEAD MASTER</strong></p>
+                <p>Your level is {{ count_up }}</p>
+            </div>
+        {% endif %}
+    </aside>
 {% endblock %}

@@ -12,7 +12,9 @@ bp_post = Blueprint('posts', __name__)
 def view_posts(user_id):
     user_data = User.find_by_id(user_id)
     posts = Post.find_all_by_email(user_data.email)
-    return render_template('post/view_posts.html', posts=posts, user_id=user_data._id)
+    posts_length = len(posts)
+    return render_template('post/view_posts.html', posts=posts,
+                           user_id=user_data._id, posts_length=posts_length)
 
 
 @bp_post.route('/new', methods=['GET', 'POST'])
@@ -32,9 +34,9 @@ def new_post():
 @bp_post.route('/edit/<string:post_id>', methods=['GET', 'POST'])
 def edit_post(post_id):
     form = EditForm()
+    post = Post.find_one(post_id)
 
     if request.method == 'POST':
-        post = Post.find_one(post_id)
         user = User.find_by_email(session["email"])
         subject = form.subject.data
         content = form.content.data
@@ -47,6 +49,8 @@ def edit_post(post_id):
         flash("fields can not be empty.")
         return redirect(url_for('posts.edit_post', post_id=post_id))
 
+    form.subject.data = post["subject"]
+    form.content.data = post["content"]
     return render_template('post/edit.html', form=form)
 
 

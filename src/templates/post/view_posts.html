@@ -10,6 +10,13 @@
             <a href="{{ url_for('posts.new_post') }}"><button class="btn btn-success">New post</button></a>
         </div>
         {% if posts|length > 0 %}
+            {% if posts|length > 1 %}
+            <div class="container">
+                <h4>{{ posts_length }} posts you published.</h4>
+            </div>
+            {% else %}
+                <h4>{{ posts_length }} post you published.</h4>
+            {% endif %}
             {% for post in posts %}
                 <div class="container">
                     <h3>{{ post.subject }}</h3>

@@ -16,7 +16,15 @@ def login():
         password = form.password.data
 
         user_data = User.find_one(phone_number)
+        if not user_data:
+            return redirect(url_for('users.register'))
         user = User.classify1(user_data)
+        # check user account time
+        # if user.account_time == 'None':
+        #     return redirect(url_for('accounts.new_account', user_id=user._id))
+
+        # elif user.account_time
+
         if user.valid_phone_number(phone_number):
             if Utils.check_password(user.password, password):
                 flash("Log in successful.")
@@ -72,6 +80,10 @@ def info(user_id):
             birthday = form.birthday_day.data
 
             user.profile(name, family, gender, company, email, birthday)
+
+            # if user.account_time == 'None':
+            #     return redirect(url_for('accounts.new_account', user_id=user._id))
+
             session["email"] = email
 
             return redirect(url_for('users.home', user_id=user._id))
@@ -103,13 +115,23 @@ def info(user_id):
 @bp_user.route('/home/<string:user_id>')
 def home(user_id):
     user = User.find_by_id(user_id)
-    main, count = User.find_sub(user.email)
-    if not isinstance(main, set):
+    main, count = User.find_sub(user_id)
+    up = user.find_uplines()
+    if not isinstance(main, set) and not isinstance(up, list):
         return render_template('user/home.html', user_id=user._id,
-                           name=user.name, count=0)
+                               name=user.name, count_sub=0, count_up=0)
+
+    elif len(up) < 1 and count > 0:
+        return render_template('user/home.html', user_id=user._id,
+                               name=user.name, count_sub=count, sub=main, count_up=0)
+
+    elif count < 1 and len(up) > 0:
+        return render_template('user/home.html', user_id=user._id,
+                               name=user.name, count_sub=0, up=up, count_up=len(up))
 
     return render_template('user/home.html', user_id=user._id,
-                           name=user.name, count=count, main=main)
+                           name=user.name, count_sub=count, sub=main,
+                           count_up=len(up), up=up)
 
 
 @bp_user.route('/change_password/<string:user_id>', methods=['GET', 'POST'])
@@ -136,4 +158,3 @@ def change_password(user_id):
             return redirect(url_for('users.change_password', user_id=user._id))
 
     return render_template('user/change_pw.html', form=form)
-
