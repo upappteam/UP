@@ -21,7 +21,7 @@ def login():
         user = User.classify1(user_data)
         # check user account time
         # if user.account_time == 'None':
-        #     return redirect(url_for('accounts.new_account', user_id=user._id))
+        #     return redirect(url_for('payments.new_account', user_id=user._id))
 
         # elif user.account_time
 
@@ -82,7 +82,7 @@ def info(user_id):
             user.profile(name, family, gender, company, email, birthday)
 
             # if user.account_time == 'None':
-            #     return redirect(url_for('accounts.new_account', user_id=user._id))
+            #     return redirect(url_for('payments.new_account', user_id=user._id))
 
             session["email"] = email
 

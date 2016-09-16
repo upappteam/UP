@@ -15,7 +15,6 @@ def new_post_pv():
         subject = form.subject.data
         to = form.to.data
         content = form.content.data
-        # print(to)
 
         if to.isalnum():
             user = User.find_one(to)
@@ -38,17 +37,6 @@ def new_post_pv():
         return redirect(url_for('messages.new_post_pv'))
 
     return render_template("message/new_pv.html", form=form)
-
-
-# @bp_message.route('/new', methods=['GET', 'POST'])
-# def new_post_pv():
-#     form = NewMessage()
-#
-#     if request.method == 'POST':
-#         print(form.to.data)
-#         print(form.subject.data)
-#         print(form.content.data)
-#     return render_template("message/new_pv.html", form=form)
 
 
 @bp_message.route('/replay/<string:author>', methods=['GET', 'POST'])

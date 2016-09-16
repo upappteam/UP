@@ -23,7 +23,10 @@ def view_sent_posts(user_id):
     """
     user_data = User.find_by_id(user_id)
     posts = Post.find_all_by_email(user_data.email)
-    posts_length = len(posts)
+    if posts:
+        posts_length = len(posts)
+    else:
+        posts_length = 0
     return render_template('post/view_posts.html', posts=posts,
                            user_id=user_data._id, posts_length=posts_length)
 

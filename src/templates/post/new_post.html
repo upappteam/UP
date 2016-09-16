@@ -5,6 +5,15 @@
 {% endblock %}
 
 {% block article %}
+    <script>
+        function text_field_ed(value) {
+    if (value == 'private') {
+        return document.getElementById("user-address").disabled = true;
+    } else {
+        return document.getElementById("user-address").disabled = false;
+    }
+}
+    </script>
     <article>
         <header>
             <h2>New post</h2>
@@ -12,14 +21,22 @@
         <div class="container">
             <form method="POST" action="">
                 <div>
-                    {{ form.subject.label }}
-                    {{ form.subject }}
-                </div>
-                <div>
-                    {{ form.content.label }}
-                    {{ form.content }}
-                </div>
-                <div>
+                    <div>
+                        <p>{{ form.type_publication.label }} {{ form.type_publication }}</p>
+                    </div>
+                    <div>
+                        {{ form.subject.label }}
+                    </div>
+                    <div>
+                        {{ form.subject }}
+                    </div>
+                    <div>
+                        {{ form.content.label }}
+                    </div>
+                    <div>
+                        {{ form.content }}
+                    </div>
+
                     {{ form.submit }}
                 </div>
             </form>

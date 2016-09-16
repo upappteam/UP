@@ -1,6 +1,5 @@
 import uuid
 import khayyam3
-# import py2neo
 from py2neo import Graph, Relationship, Node
 
 from src.users.models import User
@@ -18,7 +17,7 @@ class Post(object):
         self.content = content
         self.to = to
         self.type_publication = type_publication
-        self.timestamo = timestamp
+        self.timestamp = timestamp
         self.publish_date = khayyam3.JalaliDatetime.today().strftime("%Y-%m-%d %H:%M:%S") if publish_date is None else publish_date
         self._id = uuid.uuid4().hex if _id is None else _id
 
@@ -39,12 +38,12 @@ class Post(object):
         #
         # return [cls(**post_data) for post_data in posts]
         query = """
-            MATCH (user:User)-[:PUBLISHED]->(post:Post)
-            WHERE user.email = {user_email}
+            MATCH (user:User)-[sent:PUBLISHED]->(post:Post)
+            WHERE user.email = {user_email} AND sent.type <> {_type}
             RETURN post
             ORDER BY post.timestamp DESC
         """
-        posts = graph.data(query, user_email=user_email)
+        posts = graph.data(query, user_email=user_email, _type='private')
 
         if posts:
             post_list = []
@@ -117,7 +116,7 @@ class Post(object):
                         _id=self._id)
 
         graph.create(new_post)
-        rel1 = Relationship(user_node, "PUBLISHED", new_post)
+        rel1 = Relationship(user_node, "PUBLISHED", new_post, type='private')
         graph.create(rel1)
 
         user = User.find_by_email(user_email)
@@ -145,7 +144,7 @@ class Post(object):
     def delete_message_inbox(_id, user):
         post = Post.find_one(_id)
         rel = graph.match_one(post, "MESSAGE", user)
-        print(rel)
+        # print(rel)
 
         graph.separate(rel)
 
@@ -153,7 +152,7 @@ class Post(object):
     def delete_message_outbox(_id, user):
         post = Post.find_one(_id)
         rel = graph.match_one(user, "PUBLISHED", post)
-        print(rel)
+        # print(rel)
 
         graph.separate(rel)
 
