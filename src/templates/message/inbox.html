@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Inbox
+{% endblock %}
+
+{% block article %}
+    <article>
+        <div class="container">
+            {% if posts %}
+                {% if posts|length > 0 %}
+                    <div>
+                        {% for post in posts %}
+                            <p>Author: {{ post["user_email"] }}</p>
+                            <p>Published date: {{ post["publish_date"] }}</p>
+                            <p>Subject: {{ post["subject"] }}</p>
+                            <p>Content: {{ post["content"] }}</p>
+                            <a href="{{ url_for('messages.replay', author=post["user_email"]) }}"><button class="btn btn-success">Replay</button> </a>
+                            <a href="{{ url_for('messages.delete_message_inbox', post_id=post["_id"]) }}"><button class="btn btn-danger">Delete</button> </a>
+                            <hr>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div>
+                        <p>Your inbox is empty.</p>
+                    </div>
+                {% endif %}
+            {% else %}
+                <div>
+                    <p>Your inbox is empty.</p>
+                </div>
+            {% endif %}
+        </div>
+    </article>
+{% endblock %}
