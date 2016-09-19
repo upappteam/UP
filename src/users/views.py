@@ -1,4 +1,5 @@
 from flask import request, render_template, flash, redirect, url_for, session
+from flask_login import current_user, login_required
 
 from . import bp_user
 from src.users.models import User
@@ -7,6 +8,7 @@ from src.users.forms import ProfileForm, ChangePasswordForm
 
 
 @bp_user.route('/info/<string:user_id>', methods=['GET', 'POST'])
+@login_required
 def info(user_id):
     user = User.find_by_id(user_id)
 
@@ -54,6 +56,7 @@ def info(user_id):
 
 
 @bp_user.route('/home/<string:user_id>')
+@login_required
 def home(user_id):
     user = User.find_by_id(user_id)
     sub = User.find_sub(user_id)
@@ -76,6 +79,7 @@ def home(user_id):
 
 
 @bp_user.route('/change_password/<string:user_id>', methods=['GET', 'POST'])
+@login_required
 def change_password(user_id):
     user = User.find_by_id(user_id)
     form = ChangePasswordForm()
@@ -99,3 +103,14 @@ def change_password(user_id):
             return redirect(url_for('users.change_password', user_id=user._id))
 
     return render_template('user/change_pw.html', form=form)
+
+
+@bp_user.route('/uplines/<string:user_id>')
+@login_required
+def view_uplines(user_id):
+    user = User.find_by_id(user_id)
+    up = user.find_uplines()
+    if isinstance(up, list) and len(up) > 0:
+        return render_template("user/view_uplines.html", up=up, count=len(up))
+
+    return redirect(url_for('users.home', user_id=user_id, name=user.name))

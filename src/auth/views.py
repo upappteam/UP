@@ -1,4 +1,4 @@
-from flask_login import current_user
+from flask_login import current_user, login_required, login_user, logout_user
 from flask import request, redirect, url_for, flash, render_template
 
 from . import bp_auth
@@ -10,9 +10,10 @@ from src.auth.forms import RegisterForm, LoginForm
 @bp_auth.route('/login', methods=['GET', 'POST'])
 def login():
     form = LoginForm()
-    if request.method == 'POST':
+    if request.method == 'POST' and form.validate_on_submit():
         phone_number = form.phone_number.data
         password = form.password.data
+        remember_me = form.remember_me.data
 
         user_data = User.find_one(phone_number)
         if not user_data:
@@ -27,7 +28,7 @@ def login():
         if user.valid_phone_number(phone_number):
             if Utils.check_password(user.password, password):
                 flash("Log in successful.")
-                # session["email"] = user.email
+                login_user(user, remember_me)
                 return redirect(url_for('users.home', user_id=user._id))
             else:
                 flash("Your password was wrong.")
@@ -62,3 +63,11 @@ def register():
             return redirect(url_for('auth.register'))
 
     return render_template('auth/register.html', form=form)
+
+
+@bp_auth.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    flash("You have been log out.")
+    return redirect(url_for('index'))

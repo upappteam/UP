@@ -22,6 +22,7 @@
     <aside>
         <h2>Log in</h2>
         <form method="POST" action="">
+            {{ form.csrf_token }}
             <div class="form-group">
                 <h4>{{ form.phone_number.label  }}</h4>
                     {% if form.phone_number.errors %}
@@ -39,7 +40,25 @@
                     {% endif %}
                     <p style="color: #0f0f0f">{{ form.password }}</p>
                 <hr>
+                <h4>{{ form.remember_me.label }} {{ form.remember_me }}</h4>
+                    {% if form.remember_me.errors %}
+                        {% for error in form.remember_me.errors %}
+                            <p>{{ error }}</p>
+                        {% endfor %}
+                    {% endif %}
+                    <p style="color: #0f0f0f"></p>
+                <hr>
+                <!--<span>
+                    <input type="checkbox" name="remember_me">
+                    <label for="remember_me">Remember me</label>
+                </span>-->
             </div>
+            <!--<div class="checkbox">
+                <label>
+                    <input type="checkbox" name="remember_me"> Remember Me
+                </label>
+            </div>-->
+
             <button type="submit" class="btn btn-default">Log in</button>
 
         </form>

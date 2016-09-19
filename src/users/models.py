@@ -1,5 +1,7 @@
+
 import uuid
 import khayyam3
+from flask_login import UserMixin
 from py2neo import Graph, Node, Relationship
 
 from src.users.constants import USER
@@ -9,7 +11,7 @@ from src.users.utils import Utils
 graph = Graph()
 
 
-class User(object):
+class User(UserMixin, object):
 
     def __init__(self, phone_number, upline_phone_number, password, company='None',
                  gender='None', email='None', name='None', family='None', birthday='None',
@@ -41,6 +43,7 @@ class User(object):
 
     @classmethod
     def classify1(cls, user_data):
+
         return cls(phone_number=user_data["phone_number"],
                    upline_phone_number=user_data["upline_phone_number"],
                    password=user_data["password"],
@@ -220,3 +223,6 @@ class User(object):
             for direct in directs:
                 direct_list += [cls(**direct[i]) for i in direct]
             return direct_list
+
+    def get_id(self):
+        return self._id

@@ -1,4 +1,5 @@
 from flask import redirect, request, session, url_for, flash, render_template
+from flask_login import login_required
 
 from . import bp_message
 from src.posts.models import Post
@@ -7,6 +8,7 @@ from src.messages.forms import NewMessage
 
 
 @bp_message.route('/new', methods=['GET', 'POST'])
+@login_required
 def new_post_pv():
     form = NewMessage()
     if request.method == 'POST':
@@ -40,6 +42,7 @@ def new_post_pv():
 
 
 @bp_message.route('/replay/<string:author>', methods=['GET', 'POST'])
+@login_required
 def replay(author):
     form = NewMessage()
     if request.method == 'POST':
@@ -73,6 +76,7 @@ def replay(author):
 
 
 @bp_message.route('/inbox/<string:user_id>')
+@login_required
 def inbox(user_id):
     user = User.find_by_id(user_id)
     posts = Post.find_message(user.email)
@@ -81,6 +85,7 @@ def inbox(user_id):
 
 
 @bp_message.route('/inbox/delete/<string:post_id>')
+@login_required
 def delete_message_inbox(post_id):
     user = User.find_by_email(session["email"])
     if Post.delete_message_inbox(post_id, user):
@@ -89,6 +94,7 @@ def delete_message_inbox(post_id):
 
 
 @bp_message.route('/outbox/delete/<string:post_id>')
+@login_required
 def delete_message_outbox(post_id):
     user = User.find_by_email(session["email"])
     if Post.delete_message_inbox(post_id, user):

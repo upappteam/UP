@@ -1,4 +1,5 @@
 from flask import render_template, request, session, redirect, url_for, flash
+from flask_login import login_required
 
 from . import bp_post
 from src.users.models import User
@@ -12,6 +13,7 @@ from src.posts.forms import PostForm, EditForm
 # TODO List of subsets
 
 @bp_post.route('/sent/<string:user_id>')
+@login_required
 def view_sent_posts(user_id):
     """
     View all posts sent by this user.
@@ -30,6 +32,7 @@ def view_sent_posts(user_id):
 
 
 @bp_post.route('/new/<string:user_id>', methods=['GET', 'POST'])
+@login_required
 def new_post(user_id):
     """
     Write a new post with type publications :
@@ -91,6 +94,7 @@ def new_post(user_id):
 
 
 @bp_post.route('/edit/<string:post_id>', methods=['GET', 'POST'])
+@login_required
 def edit_post(post_id):
     """
     Edit sent post.
@@ -119,6 +123,7 @@ def edit_post(post_id):
 
 
 @bp_post.route('/delete/<string:post_id>')
+@login_required
 def delete_post(post_id):
     """
     Delete post.
@@ -132,6 +137,7 @@ def delete_post(post_id):
 
 
 @bp_post.route('/public')
+@login_required
 def view_public_posts():
     """
     View all public post sent by everyone.
@@ -145,6 +151,7 @@ def view_public_posts():
 
 
 @bp_post.route('/from_subsets/<string:user_id>')
+@login_required
 def posts_from_subsets(user_id):
     user = User.find_by_id(user_id)
     posts = Post.find_message_by_type(user.email, 'uplines')
@@ -155,6 +162,7 @@ def posts_from_subsets(user_id):
 
 
 @bp_post.route('/from_uplines/<string:user_id>')
+@login_required
 def posts_from_uplines(user_id):
     user = User.find_by_id(user_id)
     posts = Post.find_message_by_type(user.email, 'subsets')
@@ -165,6 +173,7 @@ def posts_from_uplines(user_id):
 
 
 @bp_post.route('/for_directs/<string:user_id>')
+@login_required
 def posts_for_directs(user_id):
     user = User.find_by_id(user_id)
     posts = Post.find_message_by_type(user.email, 'directs')

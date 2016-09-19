@@ -4,6 +4,36 @@
     Home
 {% endblock %}
 
+{% block header %}
+    <div class="header-container">
+        <header class="wrapper clearfix">
+            {% if user_id %}<a href="{{ url_for('users.home', user_id=user_id) }}"><h1 class="title">Network Marketing</h1></a>
+            {% else %}<a href="{{ url_for('index') }}"><h1 class="title">Network Marketing</h1></a>
+            {% endif %}
+            <nav>
+                <ul>
+                    {% if loged_in %}<li><a href="{{ url_for('auth.login') }}">Log in</a></li>{% endif %}
+                    {% if loged_in %}<li><a href="{{ url_for('auth.register') }}">Register</a></li>{% endif %}
+                    <li><a href="{{ url_for('auth.logout') }}">Log out</a></li>
+                </ul>
+            </nav>
+        </header>
+    </div>
+    <div class="flash">
+        <div>
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                    <ul class=flashes>
+                        {% for message in messages %}
+                            <li>{{ message }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            {% endwith %}
+        </div>
+    </div>
+{% endblock %}
+
 {% block article %}
     <article>
         <header>
@@ -97,38 +127,7 @@
 
 {% block aside %}
     <aside>
-        {% if up %}
-            {% if up|length > 0 %}
-                <div class="container">
-                    <h4>Your uplines are:</h4>
-                </div>
-                <div class="container">
-                    {% for user in up %}
-                        <p>
-                            Name: {{ user["name"] }}
-                            <br>
-                            Family: {{ user["family"] }}
-                            <br>
-                            Phone number: {{ user["phone_number"] }}
-                            <br>
-                            Upline phone number: {{ user["upline_phone_number"] }}
-
-                        </p>
-                        <hr>
-                    {% endfor %}
-                    <p>Your level is {{ count_up }}</p>
-                </div>
-            {% else %}
-                <div class="container">
-                    <p>You are <strong>HEAD MASTER</strong></p>
-                    <p>Your level is {{ count_up }}</p>
-                </div>
-            {% endif %}
-        {% else %}
-            <div class="container">
-                <p>You are <strong>HEAD MASTER</strong></p>
-                <p>Your level is {{ count_up }}</p>
-            </div>
-        {% endif %}
+        <br>
+        <a href="{{ url_for('users.view_uplines', user_id=user_id) }}"><button class="btn btn-default">Uplines</button></a>
     </aside>
 {% endblock %}

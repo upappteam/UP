@@ -7,7 +7,7 @@
 {% block article %}
     <article>
         <div class="container">
-            <a href="{{ url_for('posts.new_post', user_id=user_id) }}"><button class="btn btn-success">New post</button></a>
+            <a href="{{ url_for('posts.new_post', user_id=user_id) }}"><button class="btn btn-primary">New post</button></a>
         </div>
         {% if posts and posts|length > 0 %}
             {% if posts|length > 1 %}
@@ -28,7 +28,7 @@
                         <p>Content: {{ post.content }}</p>
                     </div>
                     <div>
-                        <a href="{{ url_for('posts.edit_post', post_id=post._id) }}"><button class="btn btn-success">Edit</button></a>
+                        <a href="{{ url_for('posts.edit_post', post_id=post._id) }}"><button class="btn btn-warning">Edit</button></a>
                         <a href="{{ url_for('posts.delete_post', post_id=post._id) }}"><button class="btn btn-danger">Delete</button></a>
                     </div>
                 </div>
