@@ -8,7 +8,7 @@ app = Flask(__name__)
 
 app.config.from_object('config')
 app.secret_key = app.config['SECRET_KEY']
-
+#asdasd
 app.register_blueprint(bp_user, url_prefix='/users')
 app.register_blueprint(bp_post, url_prefix='/posts')
 
