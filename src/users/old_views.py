@@ -21,7 +21,7 @@ def register():
         upline_phone_number = form.upline_phone_number.data
         if not password == password_c:
             flash("The confirm password not matched.")
-            return render_template('user/register.html', form=form)
+            return render_template('user/../templates/auth/register.html', form=form)
 
         new_user = User(phone_number)
         if new_user.register(password, upline_phone_number):
@@ -42,9 +42,9 @@ def register():
                                    user_id=user_data["_id"], form=form_profile)
 
         else:
-            return render_template('user/register.html', form=form)
+            return render_template('user/../templates/auth/register.html', form=form)
 
-    return render_template('user/register.html', form=form)
+    return render_template('user/../templates/auth/register.html', form=form)
 
 
 @bp_user.route('/login', methods=['GET', 'POST'])
@@ -70,13 +70,13 @@ def login():
 
             else:
                 flash("The password is wrong.")
-                return render_template("user/login.html", form=form)
+                return render_template("user/../templates/auth/login.html", form=form)
 
         else:
             flash("The user does not exist.")
             return redirect(url_for('users.register'))
 
-    return render_template('user/login.html', form=form)
+    return render_template('user/../templates/auth/login.html', form=form)
 
 
 @bp_user.route('/profile/<string:user_id>', methods=['GET', 'POST'])

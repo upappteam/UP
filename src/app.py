@@ -1,18 +1,8 @@
-from flask import Flask, render_template
-
-from src.users.views import bp_user
-from src.posts.views import bp_post
-from src.messages.views import bp_message
+from flask import render_template
+from src import create_app
 
 
-app = Flask(__name__)
-
-app.config.from_object('config')
-app.secret_key = app.config['SECRET_KEY']
-
-app.register_blueprint(bp_user, url_prefix='/users')
-app.register_blueprint(bp_post, url_prefix='/posts')
-app.register_blueprint(bp_message, url_prefix='/messages')
+app = create_app('develop')
 
 
 @app.route('/')

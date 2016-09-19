@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Login
+{% endblock %}
+
+{% block article %}
+    <article xmlns="http://www.w3.org/1999/html">
+        <header>
+            <h1>Log in</h1>
+        </header>
+        <section>
+            <h3>Enter your phone number and password to Log in.</h3>
+            <p>Don't have yet!</p>
+            <p>Click here to join your group.</p>
+            <p><a href="{{ url_for('auth.register') }}"><button class="btn bg-primary"> Register </button></a></p>
+        </section>
+    </article>
+{% endblock %}
+
+{% block aside %}
+    <aside>
+        <h2>Log in</h2>
+        <form method="POST" action="">
+            <div class="form-group">
+                <h4>{{ form.phone_number.label  }}</h4>
+                    {% if form.phone_number.errors %}
+                        {% for error in form.phone_number.errors %}
+                            <p>{{ error }}</p>
+                        {% endfor %}
+                    {% endif %}
+                    <p style="color: #0f0f0f;">{{ form.phone_number }}</p>
+                <hr>
+                <h4>{{ form.password.label  }}</h4>
+                    {% if form.password.errors %}
+                        {% for error in form.password.errors %}
+                            <p>{{ error }}</p>
+                        {% endfor %}
+                    {% endif %}
+                    <p style="color: #0f0f0f">{{ form.password }}</p>
+                <hr>
+            </div>
+            <button type="submit" class="btn btn-default">Log in</button>
+
+        </form>
+    </aside>
+{% endblock %}

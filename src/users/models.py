@@ -2,7 +2,7 @@ import uuid
 import khayyam3
 from py2neo import Graph, Node, Relationship
 
-import src.users.constants as UserConst
+from src.users.constants import USER
 from src.users.utils import Utils
 
 
@@ -31,12 +31,12 @@ class User(object):
 
     @staticmethod
     def find_one(phone_number):
-        user_data = graph.find_one(UserConst.USER, 'phone_number', phone_number)
+        user_data = graph.find_one(USER, 'phone_number', phone_number)
         return user_data
 
     @staticmethod
     def find_by_email(user_email):
-        user_data = graph.find_one(UserConst.USER, 'email', user_email)
+        user_data = graph.find_one(USER, 'email', user_email)
         return user_data
 
     @classmethod
@@ -56,7 +56,7 @@ class User(object):
                    _id=user_data["_id"])
 
     def classify_by_self(self):
-        user_data = graph.find_one(UserConst.USER, "email", self.email)
+        user_data = graph.find_one(USER, "email", self.email)
         return User(phone_number=user_data.phone_number,
                     upline_phone_number=user_data["upline_phone_number"],
                     password=user_data["password"],
@@ -74,7 +74,7 @@ class User(object):
     def register(self):
         user_date = User.find_one(self.phone_number)
         if not user_date:
-            new_user = Node(UserConst.USER,
+            new_user = Node(USER,
                             phone_number=self.phone_number,
                             upline_phone_number=self.upline_phone_number,
                             password=self.password,
@@ -110,7 +110,7 @@ class User(object):
 
     @classmethod
     def find_by_id(cls, _id):
-        user_data = graph.find_one(UserConst.USER, property_key='_id', property_value=_id)
+        user_data = graph.find_one(USER, property_key='_id', property_value=_id)
         if user_data:
             return cls(phone_number=user_data["phone_number"],
                        upline_phone_number=user_data["upline_phone_number"],
@@ -163,7 +163,7 @@ class User(object):
     def find_sub(_id):
         user = User.find_by_id(_id)
 
-        sub_list = [sub_user for sub_user in graph.find(UserConst.USER,
+        sub_list = [sub_user for sub_user in graph.find(USER,
                                                         property_key="upline_phone_number",
                                                         property_value=user.phone_number)]
         if sub_list:
@@ -172,7 +172,7 @@ class User(object):
             while True:
                 sub = sub_list[0]
                 sub_list = sub_list[1:]
-                sub_list += [sub_user for sub_user in graph.find(UserConst.USER,
+                sub_list += [sub_user for sub_user in graph.find(USER,
                                                                  property_key="upline_phone_number",
                                                                  property_value=sub["phone_number"]) if sub_user is not None]
 
@@ -181,18 +181,13 @@ class User(object):
                     main = set(main)
                     break
             if main:
-                # for i in main:
-                    # print(i["phone_number"])
-                count = len(main)
-                # print(count)
-                return main, count
+                return main
 
         else:
-            # print("You have not subset yet!")
-            return None, 0
+            return []
 
     def find_uplines(self):
-        upline = graph.find_one(UserConst.USER, 'phone_number', self.upline_phone_number)
+        upline = graph.find_one(USER, 'phone_number', self.upline_phone_number)
 
         if upline:
             main = []
@@ -200,7 +195,7 @@ class User(object):
             up = upline
 
             while True:
-                upline = graph.find_one(UserConst.USER, "phone_number",
+                upline = graph.find_one(USER, "phone_number",
                                         up["upline_phone_number"])
                 if upline:
                     main.append(upline)
@@ -211,3 +206,17 @@ class User(object):
             return main
 
         return []
+
+    @classmethod
+    def find_directs(cls, user_email):
+        query = """
+            MATCH (user1:User)-[:DIRECT]->(user2:User)
+            WHERE user1.email = {user_email}
+            RETURN user2
+        """
+        directs = graph.data(query, user_email=user_email)
+        if directs:
+            direct_list = []
+            for direct in directs:
+                direct_list += [cls(**direct[i]) for i in direct]
+            return direct_list

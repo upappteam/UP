@@ -17,7 +17,7 @@
                 <p>{{ error }}</p>
             {% endfor %}
         {% endif %}
-		{{ form.phone_number }}
+		<p style="color: #0f0f0f">{{ form.phone_number }}</p>
 		<hr>
 		<h4>{{ form.upline_phone_number.label  }}</h4>
         {% if form.upline_phone_number.errors %}
@@ -25,7 +25,7 @@
                 <p>{{ error }}</p>
             {% endfor %}
         {% endif %}
-		{{ form.upline_phone_number }}
+		<p style="color: #0f0f0f">{{ form.upline_phone_number }}</p>
 		<hr>
 		<h4>{{ form.password.label  }}</h4>
         {% if form.password.errors %}
@@ -33,7 +33,7 @@
                 <p>{{ error }}</p>
             {% endfor %}
         {% endif %}
-		{{ form.password}}
+		<p style="color: #0f0f0f">{{ form.password}}</p>
 		<hr>
         <h4>{{ form.password_c.label  }}</h4>
         {% if form.password_c.errors %}
@@ -41,9 +41,9 @@
                 <p>{{ error }}</p>
             {% endfor %}
         {% endif %}
-		{{ form.password_c}}
+		<p style="color: #0f0f0f">{{ form.password_c}}</p>
 		<hr>
-		{{ form.submit}}
+		<button type="submit" class="btn btn-default">Register</button>
 
 	</form>
 </aside>

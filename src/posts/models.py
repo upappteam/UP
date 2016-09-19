@@ -105,7 +105,7 @@ class Post(object):
 
             return post_list
 
-    def insert_pv(self, to, user_email):
+    def insert_by_type(self, to, user_email, _type):
         user_node = User.find_by_email(self.user_email)
         new_post = Node("Post", user_email=self.user_email,
                         subject=self.subject,
@@ -116,11 +116,11 @@ class Post(object):
                         _id=self._id)
 
         graph.create(new_post)
-        rel1 = Relationship(user_node, "PUBLISHED", new_post, type='private')
+        rel1 = Relationship(user_node, "PUBLISHED", new_post, type=_type)
         graph.create(rel1)
 
         user = User.find_by_email(user_email)
-        rel2 = Relationship(new_post, "MESSAGE", user)
+        rel2 = Relationship(new_post, "MESSAGE", user, type=_type)
         graph.create(rel2)
 
     @classmethod
@@ -170,4 +170,33 @@ class Post(object):
             for post in posts:
                 post_list += [cls(**post[i]) for i in post]
 
+            return post_list
+
+    @staticmethod
+    def connect(user_email, post_id, _type):
+        user = User.find_by_email(user_email)
+        post = Post.find_one(post_id)
+        rel = Relationship(post, "MESSAGE", user, type=_type)
+        graph.create(rel)
+
+    @staticmethod
+    def disconnect(user_email, post_id, _type):
+        user = User.find_by_email(user_email)
+        post = Post.find_one(post_id)
+        rel = Relationship(post, "MESSAGE", user, type=_type)
+        graph.separate(rel)
+
+    @classmethod
+    def find_message_by_type(cls, user_email, _type):
+        query = """
+            MATCH (post:Post)-[:MESSAGE{type: {_type}}]->(user:User)
+            WHERE user.email = {user_email}
+            RETURN post
+            ORDER BY post.timestamp DESC
+        """
+        posts = graph.data(query, user_email=user_email, _type=_type)
+        if posts:
+            post_list = []
+            for post in posts:
+                post_list += [cls(**post[i]) for i in post]
             return post_list

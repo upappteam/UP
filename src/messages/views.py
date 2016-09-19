@@ -1,11 +1,9 @@
-from flask import Blueprint, redirect, request, session, url_for, flash, render_template
+from flask import redirect, request, session, url_for, flash, render_template
 
+from . import bp_message
 from src.posts.models import Post
 from src.users.models import User
 from src.messages.forms import NewMessage
-
-
-bp_message = Blueprint('messages', __name__)
 
 
 @bp_message.route('/new', methods=['GET', 'POST'])
@@ -27,7 +25,9 @@ def new_post_pv():
             Post(user_email=session["email"],
                  subject=subject,
                  content=content,
-                 type_publication="private").insert_pv(to=user_email, user_email=user_email)
+                 type_publication="private").insert_by_type(to=user_email,
+                                                            user_email=user_email,
+                                                            _type='private')
 
             user = User.find_by_email(session["email"])
             flash("Message sent to {0}".format(to))
@@ -58,7 +58,7 @@ def replay(author):
             Post(user_email=session["email"],
                  subject=subject,
                  content=content,
-                 type_publication="private").insert_pv(to=user_email, user_email=user_email)
+                 type_publication="private").insert_by_type(to=user_email, user_email=user_email)
 
             user = User.find_by_email(session["email"])
             flash("Message sent to {0}".format(to))
