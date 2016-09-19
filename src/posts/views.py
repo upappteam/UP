@@ -1,5 +1,5 @@
-from flask import render_template, request, session, redirect, url_for, flash
-from flask_login import login_required
+from flask import render_template, request, redirect, url_for, flash
+from flask_login import login_required, current_user
 
 from . import bp_post
 from src.users.models import User
@@ -48,7 +48,7 @@ def new_post(user_id):
         subject = form.subject.data
         content = form.content.data
         type_publication = form.type_publication.data
-        user_data = User.find_by_email(session["email"])
+        user_data = User.find_by_email(current_user.email)
 
         if type_publication == 'public':
             Post(user_data["email"], subject, content, type_publication=type_publication).insert(_type=type_publication)
@@ -77,7 +77,7 @@ def new_post(user_id):
                 return redirect(url_for('posts.new_post', user_id=user_id))
 
         elif type_publication == 'directs':
-            directs = User.find_directs(session["email"])
+            directs = User.find_directs(current_user.email)
             if directs:
                 post = Post(user_data["email"], subject, content, type_publication=type_publication)
                 post.insert(type_publication)
@@ -105,7 +105,7 @@ def edit_post(post_id):
     post = Post.find_one(post_id)
 
     if request.method == 'POST':
-        user = User.find_by_email(session["email"])
+        user = User.find_by_email(current_user.email)
         subject = form.subject.data
         content = form.content.data
 
@@ -130,7 +130,7 @@ def delete_post(post_id):
     :param post_id: _id post for delete that.
     :return: Redirect to view sent posts page.
     """
-    user = User.find_by_email(session["email"])
+    user = User.find_by_email(current_user.email)
     Post.delete(post_id, user)
     flash("Post deleted.")
     return redirect(url_for('posts.view_sent_posts', user_id=user["_id"]))
