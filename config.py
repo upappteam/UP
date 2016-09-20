@@ -7,7 +7,7 @@ class Config:
     @staticmethod
     def init_app(app):
         pass
-
+#this is test
 
 class Develop(Config):
     DEBUG = True
