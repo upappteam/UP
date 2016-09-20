@@ -40,11 +40,6 @@
             <h1>Hello {{ name }}</h1>
         </header>
         <div class="container">
-            <p>Number of your subset is: {{ count_sub }}</p>
-            <p>Number of your upline is: {{ count_up }}</p>
-            <br>
-        </div>
-        <div class="container">
             <a href="{{ url_for('messages.new_post_pv') }}"><button class="btn btn-success">New message</button></a>
             <br>
         </div>
@@ -93,35 +88,6 @@
             <a href="{{ url_for('posts.posts_for_directs', user_id=user_id) }}"><button class="btn btn-success">Posts for directs</button></a>
             <br>
         </div>
-        {% if sub %}
-            {% if sub|length > 0 %}
-                <div>
-                    <h4><label class="label" style="color: #1b6d85; font-size: larger;">Your subset are:</label></h4>
-                </div>
-                <div class="container">
-                    <div class="container">
-                        {% for user in sub %}
-                            <p>
-                                Name: {{ user["name"] }}
-                                <br>
-                                Family: {{ user["family"] }}
-                                <br>
-                                Phone number: {{ user["phone_number"] }}
-                                <br>
-                                Upline phone number: {{ user["upline_phone_number"] }}
-
-                            </p>
-                            <hr>
-                        {% endfor %}
-                    </div>
-                </div>
-            {% else %}
-                <p>You have not subset yet!</p>
-                <p>You have not upline!</p>
-            {% endif %}
-        {% else %}
-            <p>You have not subset yet!</p>
-        {% endif %}
     </article>
 {% endblock %}
 
@@ -133,4 +99,24 @@
         <br>
         <a href="{{ url_for('users.view_subsets', user_id=user_id) }}"><button class="btn btn-default">Subsets</button></a>
     </aside>
+{% endblock %}
+
+{% block footer %}
+    <footer class="wrapper">
+        <form action="" method="POST">
+            <div>
+                <label for="search"> Search
+                    <br>
+                    <span>
+                        <input type="text" style="color: #0f0f0f" name="search" id="search" value="{{ request.form.search }}" placeholder="Emails, Posts, Names">
+                        <button class="btn btn-default" type="submit">Search</button>
+                    </span>
+                </label>
+            </div>
+        </form>
+        <br>
+        <br>
+        <br>
+        <br>
+    </footer>
 {% endblock %}

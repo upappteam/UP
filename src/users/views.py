@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from flask import request, render_template, flash, redirect, url_for
 from flask_login import current_user, login_required, login_user
 
@@ -55,27 +56,16 @@ def info(user_id):
         return render_template('user/change_pw.html', form_pw=form)
 
 
-@bp_user.route('/home/<string:user_id>')
+@bp_user.route('/home/<string:user_id>', methods=['GET', 'POST'])
 @login_required
 def home(user_id):
     user = User.find_by_id(user_id)
-    sub = User.find_sub(user_id)
-    up = user.find_uplines()
-    if not isinstance(sub, set) and not isinstance(up, list):
-        return render_template('user/home.html', user_id=user._id,
-                               name=user.name, count_sub=0, count_up=0)
 
-    elif len(up) < 1 and len(sub) > 0:
-        return render_template('user/home.html', user_id=user._id,
-                               name=user.name, count_sub=len(sub), sub=sub, count_up=0)
+    if request.method == 'POST' and request.form["search"]:
+        word = request.form["search"]
+        return redirect(url_for('users.search', word=word))
 
-    elif len(sub) < 1 and len(up) > 0:
-        return render_template('user/home.html', user_id=user._id,
-                               name=user.name, count_sub=0, up=up, count_up=len(up))
-
-    return render_template('user/home.html', user_id=user._id,
-                           name=user.name, count_sub=len(sub), sub=sub,
-                           count_up=len(up), up=up)
+    return render_template('user/home.html', user_id=user._id, name=user.name)
 
 
 @bp_user.route('/change_password/<string:user_id>', methods=['GET', 'POST'])
@@ -83,7 +73,7 @@ def home(user_id):
 def change_password(user_id):
     user = User.find_by_id(user_id)
     form = ChangePasswordForm()
-    if request.method == 'POST':
+    if request.method == 'POST' and form.validate_on_submit():
         current_password = form.current_password.data
         new_password = form.new_password.data
         confirm_password = form.confirm_password.data
@@ -113,6 +103,7 @@ def view_uplines(user_id):
     if isinstance(up, list) and len(up) > 0:
         return render_template("user/view_uplines.html", up=up, count=len(up))
 
+    flash("You have not any Uplines.")
     return redirect(url_for('users.home', user_id=user_id, name=user.name))
 
 
@@ -123,5 +114,33 @@ def view_subsets(user_id):
     sub = User.find_sub(user_id)
     if isinstance(sub, set) and len(sub) > 0:
         return render_template("user/view_subsets.html", sub=sub, count=len(sub))
-
+    flash("You have not any subsets yet!")
     return redirect(url_for('users.home', user_id=user_id, name=user.name))
+
+
+@bp_user.route('/search/<string:word>')
+@login_required
+def search(word):
+    word = word.strip()
+    print(word)
+    if "@" in word:
+        flash("Can not find any user by email address.")
+        return redirect(url_for('users.home', user_id=current_user._id))
+    elif " " in word:
+        name_family = word.split(" ")
+        if len(name_family) == 2:
+            name, family = name_family
+            users = User.search_by_name_family(name=name, family=family)
+            return render_template("user/result.html", users=users, user_id=current_user._id)
+        elif len(name_family) == 3:
+            name, mid_name, family = name_family
+            users1 = User.search_by_name_family(name=name+mid_name, family=family)
+            users2 = User.search_by_name_family(name=name, family=mid_name+family)
+            users = users1 + users2
+            return render_template("user/result.html", users=users, user_id=current_user._id)
+    elif " " not in word:
+        users = User.search_by_name_family(name=word, family=word)
+        return render_template("user/result.html", users=users, user_id=current_user._id)
+
+    flash("Could not find any user {}".format(word))
+    return redirect(url_for('users.home', user_id=current_user._id))

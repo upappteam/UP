@@ -10,11 +10,17 @@
             <h3>Change Password</h3>
         </header>
         <form method="POST">
+            {{ form.csrf_token }}
             <ul>
                 <li>
                     <section>
                         <div>
                             <p>{{ form.current_password.label }}</p>
+                                {% if form.current_password.errors %}
+                                    {% for error in form.current_password.errors %}
+                                        <p>{{ error }}</p>
+                                    {% endfor %}
+                                {% endif %}
                             <p>{{ form.current_password }}</p>
                         </div>
                     </section>
@@ -23,6 +29,11 @@
                     <section>
                         <div>
                             <p>{{ form.new_password.label }}</p>
+                                {% if form.new_password.errors %}
+                                    {% for error in form.new_password.errors %}
+                                        <p>{{ error }}</p>
+                                    {% endfor %}
+                                {% endif %}
                             <p>{{ form.new_password }}</p>
                         </div>
                     </section>
@@ -31,14 +42,18 @@
                     <section>
                         <div>
                             <p>{{ form.confirm_password.label }}</p>
+                                {% if form.confirm_password.errors %}
+                                    {% for error in form.confirm_password.errors %}
+                                        <p>{{ error }}</p>
+                                    {% endfor %}
+                                {% endif %}
                             <p>{{ form.confirm_password }}</p>
                         </div>
                     </section>
                 </li>
             </ul>
 
-            {{ form.submit }}
-
+            <button type="submit" class="btn btn-warning">Change password</button>
         </form>
     </article>
 {% endblock %}

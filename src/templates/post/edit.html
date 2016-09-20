@@ -8,6 +8,7 @@
     <article>
         <div class="container">
             <form action="" method="POST">
+                {{ form.csrf_token }}
                 <div>
                     {{ form.subject.label }}
                     {{ form.subject }}

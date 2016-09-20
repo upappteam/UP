@@ -8,8 +8,6 @@ from src.posts import bp_post
 from src.messages import bp_message
 
 
-# TODO Fix the configurations
-
 login_manager = LoginManager()
 login_manager.session_protection = 'strong'
 login_manager.login_view = 'users.login'

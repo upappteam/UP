@@ -32,7 +32,7 @@ def login():
                 return redirect(url_for('users.home', user_id=user._id))
             else:
                 flash("Your password was wrong.")
-                return redirect(url_for('users.login'))
+                return redirect(url_for('auth.login'))
         else:
             flash("The user does not exist.")
             return redirect(url_for('auth.login'))

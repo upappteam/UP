@@ -20,6 +20,7 @@
         </header>
         <div class="container">
             <form method="POST" action="">
+                {{ form.csrf_token }}
                 <div>
                     <div>
                         <p>{{ form.type_publication.label }} {{ form.type_publication }}</p>

@@ -1,0 +1,32 @@
+{% extends "user/home.html" %}
+
+{% block title %}
+    Result
+{% endblock %}
+
+{% block header %}
+
+{% endblock %}
+
+{% block article %}
+    <article>
+        <h4>Result: </h4>
+        <div class="container">
+            <br>
+            {% if users %}
+                {% for user in users %}
+                    <p>Name: {{ user.name }}</p>
+                    <p>Family: {{ user.family }}</p>
+                    <p>Gender: {{ user.gender }}</p>
+                    <p>Email: {{ user.email }}</p>
+                    <hr>
+                {% endfor %}
+            {% else %}
+                <p>Could not find anyone.</p>
+            {% endif %}
+        </div>
+    </article>
+{% endblock %}
+
+{% block footer %}
+{% endblock %}

@@ -84,9 +84,11 @@
         </div> <!-- #main-container -->
 
         <div class="footer-container">
-            <footer class="wrapper">
-                <h3>footer</h3>
-            </footer>
+            {% block footer %}
+                <footer class="wrapper">
+                    <h3>footer</h3>
+                </footer>
+            {% endblock %}
         </div>
 
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>

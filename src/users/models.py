@@ -226,3 +226,28 @@ class User(UserMixin, object):
 
     def get_id(self):
         return self._id
+
+    @classmethod
+    def search_by_name_family(cls, name, family):
+        query = """
+            MATCH (user:User)
+            WHERE (user.name = {name} AND user.family = {family}) OR (user.name = {name})
+            OR (user.family = {family})
+            RETURN user
+        """
+
+        users = graph.data(query, name=name, family=family)
+        if users:
+            users_list = []
+            for user in users:
+                users_list += [cls(**user[i]) for i in user]
+            return users_list
+
+    # @classmethod
+    # def search_by_email(cls, email):
+    #     query = """
+    #         MATCH (user:User)
+    #         WHERE user.email = {email}
+    #         RETURN user
+    #     """
+    #     user
