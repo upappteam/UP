@@ -4,41 +4,130 @@
     Home
 {% endblock %}
 
+{% block header %}
+    <div class="header-container">
+        <header class="wrapper clearfix">
+            {% if user_id %}<a href="{{ url_for('users.home', user_id=user_id) }}"><h1 class="title">Network Marketing</h1></a>
+            {% else %}<a href="{{ url_for('index') }}"><h1 class="title">Network Marketing</h1></a>
+            {% endif %}
+            <nav>
+                <ul>
+                    {% if loged_in %}<li><a href="{{ url_for('auth.login') }}">Log in</a></li>{% endif %}
+                    {% if loged_in %}<li><a href="{{ url_for('auth.register') }}">Register</a></li>{% endif %}
+                    <li><a href="{{ url_for('auth.logout') }}">Log out</a></li>
+                </ul>
+            </nav>
+        </header>
+    </div>
+    <div class="flash">
+        <div>
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                    <ul class=flashes>
+                        {% for message in messages %}
+                            <li>{{ message }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            {% endwith %}
+        </div>
+    </div>
+{% endblock %}
+
 {% block article %}
     <article>
         <header>
             <h1>Hello {{ name }}</h1>
         </header>
         <div class="container">
-            <p>Number of your subset is: {{ count }}</p>
+            <p>Number of your subset is: {{ count_sub }}</p>
+            <p>Number of your upline is: {{ count_up }}</p>
+            <br>
         </div>
         <div class="container">
-            <a href="{{ url_for('users.change_password', user_id=user_id) }}">change password</a>
+            <a href="{{ url_for('messages.new_post_pv') }}"><button class="btn btn-success">New message</button></a>
+            <br>
         </div>
         <div class="container">
-            <a href="{{ url_for('posts.view_posts', user_id=user_id) }}">View posts</a>
+            <br>
+            <a href="{{ url_for('users.change_password', user_id=user_id) }}"><button class="btn btn-success">Change password</button></a>
+            <br>
         </div>
-        {% if main|length > 0 %}
-            <div class="container">
-                <h4>Your subset are:</h4>
-            </div>
-            <div class="container">
-                {% for user in main %}
-                    <p>
-                        Name: {{ user["name"] }}
-                        <br>
-                        Family: {{ user["family"] }}
-                        <br>
-                        Phone number: {{ user["phone_number"] }}
-                        <br>
-                        Upline phone number: {{ user["upline_phone_number"] }}
+        <div class="container">
+            <br>
+            <a href="{{ url_for('posts.view_sent_posts', user_id=user_id) }}"><button class="btn btn-success">View sent posts</button></a>
+            <br>
+        </div>
+        <div class="container">
+            <br>
+            <a href="{{ url_for('posts.new_post', user_id=user_id) }}"><button class="btn btn-success">New post</button></a>
+            <br>
+        </div>
+        <div class="container">
+            <br>
+            <a href="{{ url_for('messages.inbox', user_id=user_id) }}"><button class="btn btn-success">Inbox</button></a>
+            <br>
+        </div>
+        <div class="container">
+            <br>
+            <a href="{{ url_for('messages.outbox', user_id=user_id) }}"><button class="btn btn-success">Outbox</button></a>
+            <br>
+        </div>
+        <div class="container">
+            <br>
+            <a href="{{ url_for('posts.view_public_posts') }}"><button class="btn btn-success">View public posts</button></a>
+            <br>
+        </div>
+        <div class="container">
+            <br>
+            <a href="{{ url_for('posts.posts_from_subsets', user_id=user_id) }}"><button class="btn btn-success">Posts from subsets</button></a>
+            <br>
+        </div>
+        <div class="container">
+            <br>
+            <a href="{{ url_for('posts.posts_from_uplines', user_id=user_id) }}"><button class="btn btn-success">Posts from uplines</button></a>
+            <br>
+        </div>
+        <div class="container">
+            <br>
+            <a href="{{ url_for('posts.posts_for_directs', user_id=user_id) }}"><button class="btn btn-success">Posts for directs</button></a>
+            <br>
+        </div>
+        {% if sub %}
+            {% if sub|length > 0 %}
+                <div>
+                    <h4><label class="label" style="color: #1b6d85; font-size: larger;">Your subset are:</label></h4>
+                </div>
+                <div class="container">
+                    <div class="container">
+                        {% for user in sub %}
+                            <p>
+                                Name: {{ user["name"] }}
+                                <br>
+                                Family: {{ user["family"] }}
+                                <br>
+                                Phone number: {{ user["phone_number"] }}
+                                <br>
+                                Upline phone number: {{ user["upline_phone_number"] }}
 
-                    </p>
-                    <hr>
-                {% endfor %}
-            </div>
+                            </p>
+                            <hr>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% else %}
+                <p>You have not subset yet!</p>
+                <p>You have not upline!</p>
+            {% endif %}
         {% else %}
             <p>You have not subset yet!</p>
         {% endif %}
     </article>
+{% endblock %}
+
+{% block aside %}
+    <aside>
+        <br>
+        <a href="{{ url_for('users.view_uplines', user_id=user_id) }}"><button class="btn btn-default">Uplines</button></a>
+    </aside>
 {% endblock %}

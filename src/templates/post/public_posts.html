@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block title %}
+    {{ title }}
+{% endblock %}
+
+{% block article %}
+    <article>
+        <div class="container">
+            {% if posts and posts|length > 0 %}
+                {% for post in posts %}
+                    <div>
+                        <p>Subject: {{ post.subject }}</p>
+                    </div>
+                    <div>
+                        <p>Author: {{ post.user_email }}</p>
+                    </div>
+                    <div>
+                        <p>Published date: {{ post.publish_date }}</p>
+                    </div>
+                    <div>
+                        <p>Content: {{ post.content }}</p>
+                    </div>
+                    <hr>
+                {% endfor %}
+            {% else %}
+                <div>
+                    <p>{{ msg }}</p>
+                </div>
+            {% endif %}
+        </div>
+    </article>
+{% endblock %}

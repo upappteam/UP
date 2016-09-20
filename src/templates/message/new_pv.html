@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block title %}
+    New message
+{% endblock %}
+
+{% block article %}
+    <article>
+        <header>
+            <h3>New message</h3>
+        </header>
+        <div class="container">
+            <form method="POST" action="">
+                <div>
+                    <p>{{ form.to.label }}</p>
+                </div>
+                <div>
+                    <p>{{ form.to }}</p>
+                </div>
+                <div>
+                    <p>{{ form.subject.label }}</p>
+                </div>
+                <div>
+                    <p>{{ form.subject }}</p>
+                </div>
+                <div>
+                    <p>{{ form.content.label }}</p>
+                </div>
+                <div>
+                    <p>{{ form.content }}</p>
+                </div>
+
+                {{ form.submit }}
+            </form>
+        </div>
+    </article>
+{% endblock %}

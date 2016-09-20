@@ -1,15 +1,21 @@
-from flask import Flask, render_template
+from flask import render_template, redirect, url_for
 
-from src.users.views import bp_user
-from src.posts.views import bp_post
-
-
-app = Flask(__name__)
-
-app.config.from_object('config')
-app.secret_key = app.config['SECRET_KEY']
-#asdasd
-app.register_blueprint(bp_user, url_prefix='/users')
-app.register_blueprint(bp_post, url_prefix='/posts')
+from src import create_app, login_manager
+from src.users.models import User
 
 
+app = create_app('develop')
+
+
+@app.route('/')
+def index():
+    return render_template('index.html')
+
+
+@login_manager.user_loader
+def load_user(user_id):
+    if user_id is None:
+        return redirect(url_for("auth.login"))
+    user = User.find_by_id(user_id)
+    if user:
+        return user

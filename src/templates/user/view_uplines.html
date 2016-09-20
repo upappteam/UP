@@ -1,0 +1,50 @@
+{% extends "user/home.html" %}
+
+{% block title %}
+    Uplines
+{% endblock %}
+
+{% block article %}
+    <article>
+        {% if up %}
+            {% if up|length > 0 %}
+                <div class="container">
+                    <h4>Your uplines are:</h4>
+                </div>
+                <div class="container">
+                    {% for user in up %}
+                        <p>
+                            Name: {{ user["name"] }}
+                            <br>
+                            Family: {{ user["family"] }}
+                            <br>
+                            Phone number: {{ user["phone_number"] }}
+                            <br>
+                            Upline phone number: {{ user["upline_phone_number"] }}
+
+                        </p>
+                        <hr>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="container">
+                    <p>You are <strong>HEAD MASTER</strong></p>
+                    <p>Your level is {{ count }}</p>
+                </div>
+            {% endif %}
+        {% else %}
+            <div class="container">
+                <p>You are <strong>HEAD MASTER</strong></p>
+                <p>Your level is {{ count }}</p>
+            </div>
+        {% endif %}
+    </article>
+{% endblock %}
+
+{% block aside %}
+    <aside>
+        <div>
+            <p>Your level is {{ count }}</p>
+        </div>
+    </aside>
+{% endblock %}

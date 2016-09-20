@@ -1,63 +1,14 @@
-from flask import Blueprint, request, render_template, flash, redirect, url_for, session
+from flask import request, render_template, flash, redirect, url_for, session
+from flask_login import current_user, login_required
 
+from . import bp_user
 from src.users.models import User
 from src.users.utils import Utils
-from src.users.forms import RegisterForm, LoginForm, ProfileForm, ChangePasswordForm
-
-
-bp_user = Blueprint('users', __name__)
-
-
-@bp_user.route('/login', methods=['GET', 'POST'])
-def login():
-    form = LoginForm()
-    if request.method == 'POST':
-        phone_number = form.phone_number.data
-        password = form.password.data
-
-        user_data = User.find_one(phone_number)
-        user = User.classify1(user_data)
-        if user.valid_phone_number(phone_number):
-            if Utils.check_password(user.password, password):
-                flash("Log in successful.")
-                session["email"] = user.email
-                return redirect(url_for('users.home', user_id=user._id))
-            else:
-                flash("Your password was wrong.")
-                return redirect(url_for('users.login'))
-        else:
-            flash("The user does not exist.")
-            return redirect(url_for('login'))
-    return render_template('user/login.html', form=form)
-
-
-@bp_user.route('/register', methods=['GET', 'POST'])
-def register():
-    form = RegisterForm()
-    if request.method == 'POST':
-        phone_number = form.phone_number.data
-        upline_phone_number = form.upline_phone_number.data
-        password = form.password.data
-        password_c = form.password_c.data
-
-        if not User.valid_phone_number(phone_number):
-            if User.valid_phone_number(upline_phone_number) and password == password_c:
-                new_user = User(phone_number=phone_number,
-                                upline_phone_number=upline_phone_number,
-                                password=Utils.set_password(password))
-                new_user.register()
-                new_user.connect_to_upline()
-
-                return redirect(url_for('users.info', user_id=new_user._id))
-
-        else:
-            flash("User exists with this phone number.")
-            return redirect(url_for('users.register'))
-
-    return render_template('user/register.html', form=form)
+from src.users.forms import ProfileForm, ChangePasswordForm
 
 
 @bp_user.route('/info/<string:user_id>', methods=['GET', 'POST'])
+@login_required
 def info(user_id):
     user = User.find_by_id(user_id)
 
@@ -72,6 +23,10 @@ def info(user_id):
             birthday = form.birthday_day.data
 
             user.profile(name, family, gender, company, email, birthday)
+
+            # if user.account_time == 'None':
+            #     return redirect(url_for('payments.new_account', user_id=user._id))
+
             session["email"] = email
 
             return redirect(url_for('users.home', user_id=user._id))
@@ -101,18 +56,30 @@ def info(user_id):
 
 
 @bp_user.route('/home/<string:user_id>')
+@login_required
 def home(user_id):
     user = User.find_by_id(user_id)
-    main, count = User.find_sub(user.email)
-    if not isinstance(main, set):
+    sub = User.find_sub(user_id)
+    up = user.find_uplines()
+    if not isinstance(sub, set) and not isinstance(up, list):
         return render_template('user/home.html', user_id=user._id,
-                           name=user.name, count=0)
+                               name=user.name, count_sub=0, count_up=0)
+
+    elif len(up) < 1 and len(sub) > 0:
+        return render_template('user/home.html', user_id=user._id,
+                               name=user.name, count_sub=len(sub), sub=sub, count_up=0)
+
+    elif len(sub) < 1 and len(up) > 0:
+        return render_template('user/home.html', user_id=user._id,
+                               name=user.name, count_sub=0, up=up, count_up=len(up))
 
     return render_template('user/home.html', user_id=user._id,
-                           name=user.name, count=count, main=main)
+                           name=user.name, count_sub=len(sub), sub=sub,
+                           count_up=len(up), up=up)
 
 
 @bp_user.route('/change_password/<string:user_id>', methods=['GET', 'POST'])
+@login_required
 def change_password(user_id):
     user = User.find_by_id(user_id)
     form = ChangePasswordForm()
@@ -137,3 +104,13 @@ def change_password(user_id):
 
     return render_template('user/change_pw.html', form=form)
 
+
+@bp_user.route('/uplines/<string:user_id>')
+@login_required
+def view_uplines(user_id):
+    user = User.find_by_id(user_id)
+    up = user.find_uplines()
+    if isinstance(up, list) and len(up) > 0:
+        return render_template("user/view_uplines.html", up=up, count=len(up))
+
+    return redirect(url_for('users.home', user_id=user_id, name=user.name))

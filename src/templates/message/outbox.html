@@ -1,21 +1,18 @@
 {% extends "base.html" %}
 
 {% block title %}
-    View Posts
+    Outbox
 {% endblock %}
 
 {% block article %}
     <article>
-        <div class="container">
-            <a href="{{ url_for('posts.new_post', user_id=user_id) }}"><button class="btn btn-primary">New post</button></a>
-        </div>
         {% if posts and posts|length > 0 %}
             {% if posts|length > 1 %}
             <div class="container">
-                <h4>{{ posts_length }} posts you published.</h4>
+                <h4>{{ posts_length }} Messages you sent.</h4>
             </div>
             {% else %}
-                <h4>{{ posts_length }} post you published.</h4>
+                <h4>{{ posts_length }} Message you sent.</h4>
             {% endif %}
             {% for post in posts %}
                 <div class="container">
@@ -28,8 +25,8 @@
                         <p>Content: {{ post.content }}</p>
                     </div>
                     <div>
-                        <a href="{{ url_for('posts.edit_post', post_id=post._id) }}"><button class="btn btn-warning">Edit</button></a>
-                        <a href="{{ url_for('posts.delete_post', post_id=post._id) }}"><button class="btn btn-danger">Delete</button></a>
+                        <a href="{{ url_for('posts.edit_post', post_id=post._id) }}"><button class="btn btn-success">Edit</button></a>
+                        <a href="{{ url_for('messages.delete_message_outbox', post_id=post._id) }}"><button class="btn btn-danger">Delete</button></a>
                     </div>
                 </div>
             {% endfor %}
