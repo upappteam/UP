@@ -1,5 +1,10 @@
+<<<<<<< HEAD
 from flask import request, render_template, flash, redirect, url_for, session
 from flask_login import current_user, login_required
+=======
+from flask import request, render_template, flash, redirect, url_for
+from flask_login import current_user, login_required, login_user
+>>>>>>> ce431ca3be05d0c5288a3e65bb3ecadef00932d7
 
 from . import bp_user
 from src.users.models import User
@@ -27,7 +32,11 @@ def info(user_id):
             # if user.account_time == 'None':
             #     return redirect(url_for('payments.new_account', user_id=user._id))
 
+<<<<<<< HEAD
             session["email"] = email
+=======
+            login_user(user)
+>>>>>>> ce431ca3be05d0c5288a3e65bb3ecadef00932d7
 
             return redirect(url_for('users.home', user_id=user._id))
 
@@ -114,3 +123,17 @@ def view_uplines(user_id):
         return render_template("user/view_uplines.html", up=up, count=len(up))
 
     return redirect(url_for('users.home', user_id=user_id, name=user.name))
+<<<<<<< HEAD
+=======
+
+
+@bp_user.route('/subsets/<string:user_id>')
+@login_required
+def view_subsets(user_id):
+    user = User.find_by_id(user_id)
+    sub = User.find_sub(user_id)
+    if isinstance(sub, set) and len(sub) > 0:
+        return render_template("user/view_subsets.html", sub=sub, count=len(sub))
+
+    return redirect(url_for('users.home', user_id=user_id, name=user.name))
+>>>>>>> ce431ca3be05d0c5288a3e65bb3ecadef00932d7

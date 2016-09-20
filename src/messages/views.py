@@ -1,5 +1,10 @@
+<<<<<<< HEAD
 from flask import redirect, request, session, url_for, flash, render_template
 from flask_login import login_required
+=======
+from flask import redirect, request, url_for, flash, render_template
+from flask_login import login_required, current_user
+>>>>>>> ce431ca3be05d0c5288a3e65bb3ecadef00932d7
 
 from . import bp_message
 from src.posts.models import Post
@@ -24,14 +29,22 @@ def new_post_pv():
             user_email = user["email"]
 
         if user_email:
+<<<<<<< HEAD
             Post(user_email=session["email"],
+=======
+            Post(user_email=current_user.email,
+>>>>>>> ce431ca3be05d0c5288a3e65bb3ecadef00932d7
                  subject=subject,
                  content=content,
                  type_publication="private").insert_by_type(to=user_email,
                                                             user_email=user_email,
                                                             _type='private')
 
+<<<<<<< HEAD
             user = User.find_by_email(session["email"])
+=======
+            user = User.find_by_email(current_user.email)
+>>>>>>> ce431ca3be05d0c5288a3e65bb3ecadef00932d7
             flash("Message sent to {0}".format(to))
             return redirect(url_for('messages.inbox', user_id=user["_id"]))
 
@@ -57,13 +70,22 @@ def replay(author):
             user = User.find_by_email(to)
             user_email = user["email"]
 
+<<<<<<< HEAD
         if user and user_email != session["email"]:
             Post(user_email=session["email"],
+=======
+        if user and user_email != current_user.email:
+            Post(user_email=current_user.email,
+>>>>>>> ce431ca3be05d0c5288a3e65bb3ecadef00932d7
                  subject=subject,
                  content=content,
                  type_publication="private").insert_by_type(to=user_email, user_email=user_email)
 
+<<<<<<< HEAD
             user = User.find_by_email(session["email"])
+=======
+            user = User.find_by_email(current_user.email)
+>>>>>>> ce431ca3be05d0c5288a3e65bb3ecadef00932d7
             flash("Message sent to {0}".format(to))
             return redirect(url_for('posts.inbox', user_id=user["_id"]))
 
@@ -87,7 +109,11 @@ def inbox(user_id):
 @bp_message.route('/inbox/delete/<string:post_id>')
 @login_required
 def delete_message_inbox(post_id):
+<<<<<<< HEAD
     user = User.find_by_email(session["email"])
+=======
+    user = User.find_by_email(current_user.email)
+>>>>>>> ce431ca3be05d0c5288a3e65bb3ecadef00932d7
     if Post.delete_message_inbox(post_id, user):
         flash("Message deleted.")
     return redirect(url_for('messages.inbox', user_id=user["_id"]))
@@ -96,7 +122,11 @@ def delete_message_inbox(post_id):
 @bp_message.route('/outbox/delete/<string:post_id>')
 @login_required
 def delete_message_outbox(post_id):
+<<<<<<< HEAD
     user = User.find_by_email(session["email"])
+=======
+    user = User.find_by_email(current_user.email)
+>>>>>>> ce431ca3be05d0c5288a3e65bb3ecadef00932d7
     if Post.delete_message_inbox(post_id, user):
         flash("Message deleted.")
     return redirect(url_for('messages.outbox', user_id=user["_id"]))
