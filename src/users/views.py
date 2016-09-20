@@ -23,12 +23,15 @@ def info(user_id):
             company = form.company.data
             birthday = form.birthday_day.data
 
+            if User.find_by_email(email):
+                flash("This someone email address registered.")
+                return redirect(url_for('users.info', user_id=current_user._id))
+
+            login_user(user)
             user.profile(name, family, gender, company, email, birthday)
 
             # if user.account_time == 'None':
             #     return redirect(url_for('payments.new_account', user_id=user._id))
-
-            login_user(user)
 
             return redirect(url_for('users.home', user_id=user._id))
 
@@ -99,7 +102,7 @@ def change_password(user_id):
 @login_required
 def view_uplines(user_id):
     user = User.find_by_id(user_id)
-    up = user.find_uplines()
+    up = user.find_uplines(user_id)
     if isinstance(up, list) and len(up) > 0:
         return render_template("user/view_uplines.html", up=up, count=len(up))
 
@@ -112,7 +115,7 @@ def view_uplines(user_id):
 def view_subsets(user_id):
     user = User.find_by_id(user_id)
     sub = User.find_sub(user_id)
-    if isinstance(sub, set) and len(sub) > 0:
+    if isinstance(sub, list) and len(sub) > 0:
         return render_template("user/view_subsets.html", sub=sub, count=len(sub))
     flash("You have not any subsets yet!")
     return redirect(url_for('users.home', user_id=user_id, name=user.name))

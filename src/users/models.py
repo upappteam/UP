@@ -162,53 +162,75 @@ class User(UserMixin, object):
 
         user.push()
 
-    @staticmethod
-    def find_sub(_id):
+    @classmethod
+    def find_sub(cls, _id):
+        # sub_list = [sub_user for sub_user in graph.find(USER,
+        #                                                 property_key="upline_phone_number",
+        #                                                 property_value=user.phone_number)]
+        # if sub_list:
+        #     main = sub_list[:]
+        #
+        #     while True:
+        #         sub = sub_list[0]
+        #         sub_list = sub_list[1:]
+        #         sub_list += [sub_user for sub_user in graph.find(USER,
+        #                                                          property_key="upline_phone_number",
+        #                                                          property_value=sub["phone_number"]) if sub_user is not None]
+        #
+        #         main += sub_list
+        #         if sub_list is None or len(sub_list) < 1:
+        #             main = set(main)
+        #             break
+        #     if main:
+        #         return main
+        #
+        # else:
+        #     return []
         user = User.find_by_id(_id)
+        query = """
+            MATCH (user1:User)-[:DIRECT*1..]->(user2:User)
+            WHERE user1._id = {_id}
+            RETURN user2
+        """
+        users = graph.data(query, _id=_id)
+        if users:
+            users_list = []
+            for user in users:
+                users_list += [cls(**user[i]) for i in user]
+            return users_list
 
-        sub_list = [sub_user for sub_user in graph.find(USER,
-                                                        property_key="upline_phone_number",
-                                                        property_value=user.phone_number)]
-        if sub_list:
-            main = sub_list[:]
-
-            while True:
-                sub = sub_list[0]
-                sub_list = sub_list[1:]
-                sub_list += [sub_user for sub_user in graph.find(USER,
-                                                                 property_key="upline_phone_number",
-                                                                 property_value=sub["phone_number"]) if sub_user is not None]
-
-                main += sub_list
-                if sub_list is None or len(sub_list) < 1:
-                    main = set(main)
-                    break
-            if main:
-                return main
-
-        else:
-            return []
-
-    def find_uplines(self):
-        upline = graph.find_one(USER, 'phone_number', self.upline_phone_number)
-
-        if upline:
-            main = []
-            main.append(upline)
-            up = upline
-
-            while True:
-                upline = graph.find_one(USER, "phone_number",
-                                        up["upline_phone_number"])
-                if upline:
-                    main.append(upline)
-                    up = upline
-                else:
-                    break
-
-            return main
-
-        return []
+    @classmethod
+    def find_uplines(cls, _id):
+        # upline = graph.find_one(USER, 'phone_number', self.upline_phone_number)
+        #
+        # if upline:
+        #     main = []
+        #     main.append(upline)
+        #     up = upline
+        #
+        #     while True:
+        #         upline = graph.find_one(USER, "phone_number",
+        #                                 up["upline_phone_number"])
+        #         if upline:
+        #             main.append(upline)
+        #             up = upline
+        #         else:
+        #             break
+        #
+        #     return main
+        #
+        # return []
+        query = """
+            MATCH (user1:User)-[:UPLINE]->(user2:User)
+            WHERE user1._id = {_id}
+            RETURN user2
+        """
+        users = graph.data(query, _id=_id)
+        if users:
+            users_list = []
+            for user in users:
+                users_list += [cls(**user[i]) for i in user]
+            return users_list
 
     @classmethod
     def find_directs(cls, user_email):
