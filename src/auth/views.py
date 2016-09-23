@@ -1,7 +1,8 @@
-from flask_login import current_user, login_required, login_user, logout_user
+from flask_login import login_required, login_user, logout_user
 from flask import request, redirect, url_for, flash, render_template
 
 from . import bp_auth
+from src.admin.models import Admin
 from src.users.models import User
 from src.users.utils import Utils
 from src.auth.forms import RegisterForm, LoginForm
@@ -14,6 +15,11 @@ def login():
         phone_number = form.phone_number.data
         password = form.password.data
         remember_me = form.remember_me.data
+
+        if '@' in phone_number and phone_number == Admin.find_admin_email(phone_number)["email"]:
+            admin = Admin.find_admin_email(phone_number)
+            if password == admin["password"]:
+                return redirect(url_for('admins.admin_home', admin_id=admin["_id"]))
 
         user_data = User.find_one(phone_number)
         if not user_data:
@@ -54,6 +60,7 @@ def register():
                                 upline_phone_number=upline_phone_number,
                                 password=Utils.set_password(password))
                 new_user.register()
+                login_user(new_user)
                 new_user.connect_to_upline()
 
                 return redirect(url_for('users.info', user_id=new_user._id))

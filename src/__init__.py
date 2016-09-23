@@ -5,6 +5,7 @@ from config import config
 from src.auth import bp_auth
 from src.users import bp_user
 from src.posts import bp_post
+from src.admin import bp_admin
 from src.messages import bp_message
 
 
@@ -23,6 +24,7 @@ def create_app(config_name):
     app.register_blueprint(bp_auth, url_prefix='/auth')
     app.register_blueprint(bp_user, url_prefix='/users')
     app.register_blueprint(bp_post, url_prefix='/posts')
+    app.register_blueprint(bp_admin, url_prefix='/admin')
     app.register_blueprint(bp_message, url_prefix='/messages')
 
     return app

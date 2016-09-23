@@ -83,9 +83,9 @@ class User(UserMixin, object):
                             password=self.password,
                             company=self.company,
                             gender=self.gender,
-                            email=self.email,
-                            name=self.name,
-                            family=self.family,
+                            email=self.email.lower(),
+                            name=self.name.lower(),
+                            family=self.family.lower(),
                             birthday=self.birthday,
                             register_date=self.register_date,
                             account_time=self.account_time,
@@ -221,7 +221,7 @@ class User(UserMixin, object):
         #
         # return []
         query = """
-            MATCH (user1:User)-[:UPLINE]->(user2:User)
+            MATCH (user1:User)-[:UPLINE*1..]->(user2:User)
             WHERE user1._id = {_id}
             RETURN user2
         """

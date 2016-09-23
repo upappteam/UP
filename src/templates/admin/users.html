@@ -1,0 +1,78 @@
+{% extends "admin/home.html" %}
+
+{% block title %}
+{% endblock %}
+
+{% block article %}
+    <article>
+        <ul class="nav nav-tabs">
+            <li role="presentation"><a href="{{ url_for('admins.admin_home', admin_id=admin_id) }}">Home</a></li>
+            <li role="presentation" class="active"><a href="{{ url_for('admins.admin_users', admin_id=admin_id) }}">Users</a></li>
+            <li role="presentation"><a href="{{ url_for('admins.admin_posts', admin_id=admin_id) }}">Posts</a></li>
+            <li role="presentation"><a href="{{ url_for('admins.admin_send_message', admin_id=admin_id) }}">Send message</a></li>
+            <li role="presentation"><a href="{{ url_for('admins.admin_read_message', admin_id=admin_id) }}">Read message</a></li>
+        </ul>
+        {% if search %}
+            <form action="" method="post">
+                <div class="container">
+                    <h3><label class="label label-info" for="search">Search one user by email, name, family</label></h3>
+                    <br>
+                    <input type="text"  placeholder="Search one user" name="search" id="search" value="{{ request.form.search }}">
+                    <button class="btn btn-primary" type="submit">Go</button>
+                </div>
+            </form>
+        {% endif %}
+        {% if users %}
+            {% if users|length > 1 %}
+                <div class="container">
+                    <h3><strong>User info:</strong></h3><strong></strong>
+                    {% for user in users %}
+                        <p><strong>Name:</strong> {{ user.name }}</p>
+                        <p><strong>Family:</strong> {{ user.family }}</p>
+                        <p><strong>Phone number:</strong> {{ user.phone_number }}</p>
+                        <p><strong>Upline phone number:</strong> {{ user.upline_phone_number }}</p>
+                        <p><strong>Company:</strong> {{ user.company }}</p>
+                        <p><strong>Email:</strong> {{ user.email }}</p>
+                        <p><strong>Gender:</strong> {{ user.gender }}</p>
+                        <p><strong>Register date:</strong> {{ user.register_date }}</p>
+                        <p><strong>Birthday:</strong> {{ user.birthday }}</p>
+                        <p><strong>User ID:</strong> {{ user._id }}</p>
+                        <hr>
+                    {% endfor %}
+                </div>
+            {% elif users|length == 1 %}
+                <div class="container">
+                    <h3><strong>User info:</strong></h3>
+                    <p><strong>Name:</strong> {{ users[0].name }}</p>
+                    <p><strong>Family:</strong> {{ users[0].family }}</p>
+                    <p><strong>Phone number:</strong> {{ users[0].phone_number }}</p>
+                    <p><strong>Upline phone number:</strong> {{ users[0].upline_phone_number }}</p>
+                    <p><strong>Company:</strong> {{ users[0].company }}</p>
+                    <p><strong>Email:</strong> {{ users[0].email }}</p>
+                    <p><strong>Gender:</strong> {{ users[0].gender }}</p>
+                    <p><strong>Register date:</strong> {{ users[0].register_date }}</p>
+                    <p><strong>Birthday:</strong> {{ users[0].birthday }}</p>
+                    <p><strong>User ID:</strong> {{ users[0]._id }}</p>
+                    <hr>
+                </div>
+            {% endif %}
+        {% endif %}
+        {% if msg %}
+            <div class="container has-error">
+                <h4><label class="label label-warning" for="search">{{ msg }}</label></h4>
+            </div>
+        {% endif %}
+    </article>
+{% endblock %}
+
+{% block aside %}
+    <aside>
+        {% block bar2 %}
+            <br>
+            <ul class="nav nav-pills nav-stacked">
+                <li role="presentation" class="active"><a href="{{ url_for('admins.admin_users', admin_id=admin_id) }}">Find one user</a></li>
+                <li role="presentation"><a href="{{ url_for('admins.show_all_users', admin_id=admin_id) }}">Show all users</a></li>
+            </ul>
+        {% endblock %}
+    </aside>
+{% endblock %}

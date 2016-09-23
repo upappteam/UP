@@ -103,17 +103,19 @@
 
 {% block footer %}
     <footer class="wrapper">
-        <form action="" method="POST">
-            <div>
-                <label for="search"> Search
-                    <br>
-                    <span>
-                        <input type="text" style="color: #0f0f0f" name="search" id="search" value="{{ request.form.search }}" placeholder="Emails, Posts, Names">
-                        <button class="btn btn-default" type="submit">Search</button>
-                    </span>
-                </label>
-            </div>
-        </form>
+        <section>
+            <form action="" method="POST">
+                <div>
+                    <label for="search"> Search
+                        <br>
+                        <span>
+                            <input type="text" style="color: #0f0f0f" name="search" id="search" value="{{ request.form.search }}" placeholder="Emails, Names">
+                            <button class="btn btn-default" type="submit">Search</button>
+                        </span>
+                    </label>
+                </div>
+            </form>
+        </section>
         <br>
         <br>
         <br>

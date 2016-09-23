@@ -9,6 +9,22 @@ class Config:
         pass
 
 
+class Admin:
+
+    ADMIN_1 = ({
+        'name': 'mohamad',
+        'family': 'hasani',
+        'email': 'mohamad@gmail.com',
+        'password': '123'
+                    },)
+    ADMIN_2 = ({
+        'name': 'majid',
+        'family': 'mohamdi',
+        'email': 'majid@gmail.com',
+        'password': '123'
+                    },)
+
+
 class Develop(Config):
     DEBUG = True
 

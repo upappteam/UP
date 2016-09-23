@@ -13,7 +13,7 @@ from src.users.forms import ProfileForm, ChangePasswordForm
 def info(user_id):
     user = User.find_by_id(user_id)
 
-    if user.name == 'None':
+    if user.name == 'none':
         form = ProfileForm()
         if request.method == 'POST':
             email = form.email.data
@@ -124,13 +124,13 @@ def view_subsets(user_id):
 @bp_user.route('/search/<string:word>')
 @login_required
 def search(word):
-    word = word.strip()
-    print(word)
-    if "@" in word:
+    word_ = word.strip()
+    # print(word)
+    if "@" in word_:
         flash("Can not find any user by email address.")
         return redirect(url_for('users.home', user_id=current_user._id))
-    elif " " in word:
-        name_family = word.split(" ")
+    elif " " in word_:
+        name_family = word_.split(" ")
         if len(name_family) == 2:
             name, family = name_family
             users = User.search_by_name_family(name=name, family=family)
@@ -141,9 +141,9 @@ def search(word):
             users2 = User.search_by_name_family(name=name, family=mid_name+family)
             users = users1 + users2
             return render_template("user/result.html", users=users, user_id=current_user._id)
-    elif " " not in word:
-        users = User.search_by_name_family(name=word, family=word)
+    elif " " not in word_:
+        users = User.search_by_name_family(name=word_, family=word_)
         return render_template("user/result.html", users=users, user_id=current_user._id)
 
-    flash("Could not find any user {}".format(word))
+    flash("Could not find any user {}".format(word_))
     return redirect(url_for('users.home', user_id=current_user._id))
