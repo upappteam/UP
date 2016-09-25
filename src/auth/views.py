@@ -17,9 +17,11 @@ def login():
         remember_me = form.remember_me.data
 
         if '@' in phone_number and phone_number == Admin.find_admin_email(phone_number)["email"]:
-            admin = Admin.find_admin_email(phone_number)
-            if password == admin["password"]:
-                return redirect(url_for('admins.admin_home', admin_id=admin["_id"]))
+            admin = Admin.classify(Admin.find_admin_email(phone_number))
+
+            if password == admin.password:
+                login_user(admin, remember_me)
+                return redirect(url_for('admins.admin_home', admin_id=admin._id))
 
         user_data = User.find_one(phone_number)
         if not user_data:

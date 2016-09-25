@@ -6,14 +6,35 @@
 
 {% block article %}
     <article>
-        {% block bar %}
-            <ul class="nav nav-tabs">
-                <li role="presentation"><a href="{{ url_for('admins.admin_home', admin_id=admin_id) }}">Home</a></li>
-                <li role="presentation"><a href="{{ url_for('admins.admin_users', admin_id=admin_id) }}">Users</a></li>
-                <li role="presentation" class="active"><a href="{{ url_for('admins.admin_posts', admin_id=admin_id) }}">Posts</a></li>
-                <li role="presentation"><a href="{{ url_for('admins.admin_send_message', admin_id=admin_id) }}">Send message</a></li>
-                <li role="presentation"><a href="{{ url_for('admins.admin_read_message', admin_id=admin_id) }}">Read message</a></li>
-            </ul>
-        {% endblock %}
+        <ul class="nav nav-tabs">
+            <li role="presentation"><a href="{{ url_for('admins.admin_home', admin_id=admin_id) }}">Home</a></li>
+            <li role="presentation"><a href="{{ url_for('admins.admin_users', admin_id=admin_id) }}">Users</a></li>
+            <li role="presentation" class="active"><a href="{{ url_for('admins.admin_posts', admin_id=admin_id) }}">Posts</a></li>
+            <li role="presentation"><a href="{{ url_for('admins.admin_send_message', admin_id=admin_id) }}">Send message</a></li>
+            <li role="presentation"><a href="{{ url_for('admins.admin_read_message', admin_id=admin_id) }}">Read message</a></li>
+        </ul>
+        {% if search %}
+            <form action="" method="post">
+                <div class="container">
+                    <h3><label class="label label-info" for="search">Search posts by title, content, author, date</label></h3>
+                    <br>
+                    <input type="text"  placeholder="Search one user" name="search" id="search" value="{{ request.form.search }}">
+                    <button class="btn btn-primary" type="submit">Go</button>
+                </div>
+            </form>
+        {% endif %}
     </article>
+{% endblock %}
+{% block aside %}
+    <aside>
+        <br>
+        <ul class="nav nav-pills nav-stacked">
+            <li role="presentation" class="active"><a href="{{ url_for('admins.find_posts', admin_id=admin_id) }}">Search for posts</a></li>
+            <li role="presentation"><a href="{{ url_for('admins.find_all_public', admin_id=admin_id) }}">Show all public posts</a></li>
+            <li role="presentation"><a href="{{ url_for('admins.find_all_private', admin_id=admin_id) }}">Show all private posts</a></li>
+            <li role="presentation"><a href="{{ url_for('admins.find_all_subsets', admin_id=admin_id) }}">Show all subsets posts</a></li>
+            <li role="presentation"><a href="{{ url_for('admins.find_all_uplene', admin_id=admin_id) }}">Show all upline posts</a></li>
+            <li role="presentation"><a href="{{ url_for('admins.find_all_direct', admin_id=admin_id) }}">Show all direct posts</a></li>
+        </ul>
+    </aside>
 {% endblock %}
