@@ -2,6 +2,7 @@ from flask import render_template, redirect, flash, url_for, request
 
 from . import bp_admin
 from src.users.models import User
+from src.posts.models import Post
 from src.admin.models import Admin
 
 
@@ -93,41 +94,187 @@ def show_all_users(admin_id):
                            search=False, msg=None, activate="active")
 
 
-@bp_admin.route('/posts/<string:admin_id>')
+@bp_admin.route('/posts/<string:admin_id>', methods=['GET', 'POST'])
 def admin_posts(admin_id):
-    if request.form == 'POST':
-        pass
-    return render_template("admin/posts.html", admin_id=admin_id)
+    search = True
+    msg = None
+    if request.method == 'POST':
+        if request.form["search"]:
+            word = request.form["search"].strip()
+            option = request.form["radio"]
+            # print(word)
+
+            if option == 'author':
+                user = User.find_by_email(word)
+                if not user:
+                    msg = "There is no user by this email: {0}".format(word)
+                    return render_template("admin/posts.html", admin_id=admin_id, activate='active', search=search, msg=msg)
+                posts = Post.admin_find_posts_by_author(word)
+                if posts:
+                    search = None
+                    return render_template("admin/posts.html",
+                                           admin_id=admin_id,
+                                           activate='active',
+                                           search=search,
+                                           msg=msg,
+                                           posts=posts)
+                else:
+                    msg = "There is no post by this author: {0}".format(word)
+                    return render_template("admin/posts.html", admin_id=admin_id, activate='active', search=search, msg=msg)
+
+            elif option == 'date':
+                if '-' in word:
+                    date = word.split('-')
+                    if len(date) >= 2:
+                        posts = Post.admin_find_posts_by_date(*date)
+                        search = None
+                        return render_template("admin/posts.html",
+                                               admin_id=admin_id,
+                                               activate='active',
+                                               search=search,
+                                               msg=msg,
+                                               posts=posts)
+                elif word.isdigit():
+                    date = [word]
+                    posts = Post.admin_find_posts_by_date(*date)
+                    search = None
+                    return render_template("admin/posts.html",
+                                           admin_id=admin_id,
+                                           activate='active',
+                                           search=search,
+                                           msg=msg,
+                                           posts=posts)
+
+                else:
+                    msg = "There is no post in this date: {0}\n Date format should be YEAR-MONTH-DAY-HOUR".format(word)
+                    return render_template("admin/posts.html", admin_id=admin_id, activate='active', search=search, msg=msg)
+
+            elif option == 'title':
+                if ' ' in word:
+                    word = word.split(' ')
+                    posts = Post.admin_find_posts_by_title(*word)
+                    if posts:
+                        search = None
+                        return render_template("admin/posts.html",
+                                               admin_id=admin_id,
+                                               activate='active',
+                                               search=search,
+                                               msg=msg,
+                                               posts=posts)
+
+                    else:
+                        msg = "There is no post by this title: {0}".format(word)
+                        return render_template("admin/posts.html", admin_id=admin_id, activate='active', search=search, msg=msg)
+
+                elif ' ' not in word:
+                    word = [word]
+                    posts = Post.admin_find_posts_by_title(*word)
+                    if posts:
+                        search = None
+                        return render_template("admin/posts.html",
+                                               admin_id=admin_id,
+                                               activate='active',
+                                               search=search,
+                                               msg=msg,
+                                               posts=posts)
+
+                    else:
+                        msg = "There is no post by this title: {0}".format(word)
+                        return render_template("admin/posts.html", admin_id=admin_id, activate='active', search=search, msg=msg)
+
+            elif option == 'content':
+                if ' ' in word:
+                    words = word.split(' ')
+                    posts = Post.admin_find_posts_by_content(*words)
+                    if posts:
+                        search = None
+                        return render_template("admin/posts.html",
+                                               admin_id=admin_id,
+                                               activate='active',
+                                               search=search,
+                                               msg=msg,
+                                               posts=posts)
+
+                    else:
+                        msg = "There is no post by this content: {0}".format(word)
+                        return render_template("admin/posts.html", admin_id=admin_id, activate='active', search=search, msg=msg)
+
+                elif ' ' not in word:
+                    word = [word]
+                    posts = Post.admin_find_posts_by_content(*word)
+                    if posts:
+                        search = None
+                        return render_template("admin/posts.html",
+                                               admin_id=admin_id,
+                                               activate='active',
+                                               search=search,
+                                               msg=msg,
+                                               posts=posts)
+
+                    else:
+                        msg = "There is no post by this content: {0}".format(word)
+                        return render_template("admin/posts.html", admin_id=admin_id, activate='active', search=search, msg=msg)
+
+        else:
+            msg = "Enter an email or title or date or a word of content."
+
+    return render_template("admin/posts.html", admin_id=admin_id, activate='active', search=search, msg=msg)
 
 
 @bp_admin.route('/posts/find_posts/<string:admin_id>')
 def find_posts(admin_id):
-    pass
+    posts = Post.admin_find_all_posts()
+    search = None
+    msg = None
+    return render_template('admin/posts.html', admin_id=admin_id, activate='active', search=search, posts=posts, msg=msg)
 
 
 @bp_admin.route('/posts/find_all_public/<string:admin_id>')
 def find_all_public(admin_id):
-    pass
+    posts = Post.admin_find_all_posts_by_type('public')
+    search = None
+    msg = None
+    return render_template('admin/posts.html', admin_id=admin_id, activate='active', search=search, posts=posts, msg=msg)
 
 
 @bp_admin.route('/posts/find_all_private/<string:admin_id>')
 def find_all_private(admin_id):
-    pass
+    posts = Post.admin_find_all_posts_by_type('private')
+    search = None
+    msg = None
+    return render_template('admin/posts.html', admin_id=admin_id, activate='active', search=search, posts=posts, msg=msg)
 
 
 @bp_admin.route('/posts/find_all_subsets/<string:admin_id>')
 def find_all_subsets(admin_id):
-    pass
+    posts = Post.admin_find_all_posts_by_type('subsets')
+    search = None
+    msg = None
+    return render_template('admin/posts.html', admin_id=admin_id, activate='active', search=search, posts=posts, msg=msg)
 
 
 @bp_admin.route('/posts/find_all_uplene/<string:admin_id>')
-def find_all_uplene(admin_id):
-    pass
+def find_all_uplines(admin_id):
+    posts = Post.admin_find_all_posts_by_type('uplines')
+    search = None
+    msg = None
+    return render_template('admin/posts.html', admin_id=admin_id, activate='active', search=search, posts=posts, msg=msg)
+
+
+@bp_admin.route('/posts/find_all_upline/<string:admin_id>')
+def find_all_upline(admin_id):
+    posts = Post.admin_find_all_posts_by_type('upline')
+    search = None
+    msg = None
+    return render_template('admin/posts.html', admin_id=admin_id, activate='active', search=search, posts=posts, msg=msg)
 
 
 @bp_admin.route('/posts/find_all_direct/<string:admin_id>')
 def find_all_direct(admin_id):
-    pass
+    posts = Post.admin_find_all_posts_by_type('directs')
+    search = None
+    msg = None
+    return render_template('admin/posts.html', admin_id=admin_id, activate='active', search=search, posts=posts, msg=msg)
 
 
 @bp_admin.route('/messages/send/<string:admin_id>')

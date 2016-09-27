@@ -53,14 +53,14 @@ def new_post(user_id):
         if type_publication == 'public':
             Post(user_data["email"], subject, content, type_publication=type_publication).insert(_type=type_publication)
 
-        elif type_publication == 'uplines' or type_publication == 'upline':
+        elif type_publication == 'uplines':
             user = User.find_by_id(user_id)
-            uplines = user.find_uplines()
+            uplines = user.find_uplines(user_id)
             if uplines:
                 post = Post(user_data["email"], subject, content,type_publication=type_publication)
                 post.insert(type_publication)
                 for up in uplines:
-                    Post.connect(up["email"], post._id, type_publication)
+                    Post.connect(up.email, post._id, type_publication)
             else:
                 flash("You have not any uplines.")
                 return redirect(url_for('posts.new_post', user_id=user_id))
@@ -71,7 +71,7 @@ def new_post(user_id):
                 post = Post(user_data["email"], subject, content, type_publication=type_publication)
                 post.insert(type_publication)
                 for sub in subsets:
-                    Post.connect(sub["email"], post._id, type_publication)
+                    Post.connect(sub.email, post._id, type_publication)
             else:
                 flash("You have not any subsets.")
                 return redirect(url_for('posts.new_post', user_id=user_id))
@@ -82,15 +82,26 @@ def new_post(user_id):
                 post = Post(user_data["email"], subject, content, type_publication=type_publication)
                 post.insert(type_publication)
                 for direct in directs:
-                    print(direct.email)
                     Post.connect(direct.email, post._id, type_publication)
             else:
                 flash("You have not any directs.")
                 return redirect(url_for('posts.new_post', user_id=user_id))
 
-        return redirect(url_for('posts.view_sent_posts', user_id=user_data["_id"]))
+        elif type_publication == 'upline':
+            user = User.find_by_id(user_id)
+            upline = User.find_one(user.upline_phone_number)
+            if upline:
+                post = Post(user_data["email"], subject, content, type_publication=type_publication)
+                post.insert(type_publication)
+                Post.connect(upline["email"], post._id, type_publication)
 
-    return render_template("post/new_post.html", form=form)
+            else:
+                flash("You have not any upline.")
+                return redirect(url_for('posts.new_post', user_id=user_id))
+
+        return redirect(url_for('posts.view_sent_posts', user_id=current_user._id))
+
+    return render_template("post/new_post.html", form=form, user_id=current_user._id)
 
 
 @bp_post.route('/edit/<string:post_id>', methods=['GET', 'POST'])

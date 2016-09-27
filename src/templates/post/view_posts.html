@@ -4,6 +4,35 @@
     View Posts
 {% endblock %}
 
+{% block header %}
+    <div class="header-container">
+        <header class="wrapper clearfix">
+            <h1 class="title">Network Marketing</h1>
+            <nav>
+                <ul>
+                    {% if loged_in %}<li><a href="{{ url_for('auth.login') }}">Log in</a></li>{% endif %}
+                    {% if loged_in %}<li><a href="{{ url_for('auth.register') }}">Register</a></li>{% endif %}
+                    <li><a href="{{ url_for('auth.logout') }}">Log out</a></li>
+                    <li><a href="{{ url_for('users.home', user_id=user_id) }}">Home</a></li>
+                </ul>
+            </nav>
+        </header>
+    </div>
+    <div class="flash">
+        <div>
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                    <ul class=flashes>
+                        {% for message in messages %}
+                            <li>{{ message }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            {% endwith %}
+        </div>
+    </div>
+{% endblock %}
+
 {% block article %}
     <article>
         <div class="container">
@@ -19,19 +48,21 @@
             {% endif %}
             {% for post in posts %}
                 <div class="container">
-                    <h3>{{ post.subject }}</h3>
+                    <h3><strong>{{ post.subject }}</strong></h3>
+                    <h4><p><strong>Type publication:</strong> {{ post.type_publication }}</p></h4>
                     <div>
-                        <p>Author: {{ post.user_email }}</p>
+                        <p><strong>Author:</strong> {{ post.user_email }}</p>
                     </div>
                     <div>
-                        <p>Published at: {{ post.publish_date }}</p>
-                        <p>Content: {{ post.content }}</p>
+                        <p><strong>Published at:</strong> {{ post.publish_date }}</p>
+                        <p><strong>Content:</strong> {{ post.content }}</p>
                     </div>
                     <div>
                         <a href="{{ url_for('posts.edit_post', post_id=post._id) }}"><button class="btn btn-warning">Edit</button></a>
                         <a href="{{ url_for('posts.delete_post', post_id=post._id) }}"><button class="btn btn-danger">Delete</button></a>
                     </div>
                 </div>
+                <hr>
             {% endfor %}
         {% else %}
             <div class="container">

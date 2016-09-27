@@ -4,6 +4,35 @@
     New Post
 {% endblock %}
 
+{% block header %}
+    <div class="header-container">
+        <header class="wrapper clearfix">
+            <h1 class="title">Network Marketing</h1>
+            <nav>
+                <ul>
+                    {% if loged_in %}<li><a href="{{ url_for('auth.login') }}">Log in</a></li>{% endif %}
+                    {% if loged_in %}<li><a href="{{ url_for('auth.register') }}">Register</a></li>{% endif %}
+                    <li><a href="{{ url_for('auth.logout') }}">Log out</a></li>
+                    <li><a href="{{ url_for('users.home', user_id=user_id) }}">Home</a></li>
+                </ul>
+            </nav>
+        </header>
+    </div>
+    <div class="flash">
+        <div>
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                    <ul class=flashes>
+                        {% for message in messages %}
+                            <li>{{ message }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            {% endwith %}
+        </div>
+    </div>
+{% endblock %}
+
 {% block article %}
     <script>
         function text_field_ed(value) {

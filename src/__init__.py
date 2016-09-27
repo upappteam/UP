@@ -11,7 +11,7 @@ from src.messages import bp_message
 
 login_manager = LoginManager()
 login_manager.session_protection = 'strong'
-login_manager.login_view = 'users.login'
+login_manager.login_view = 'auth.login'
 
 
 def create_app(config_name):

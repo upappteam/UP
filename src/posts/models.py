@@ -200,3 +200,176 @@ class Post(object):
             for post in posts:
                 post_list += [cls(**post[i]) for i in post]
             return post_list
+
+    @classmethod
+    def admin_find_posts_by_author(cls, author):
+        query = """
+            MATCH (post:Post)
+            WHERE post.user_email = {author}
+            RETURN post
+            ORDER BY post.timestamp DESC
+        """
+        posts = graph.data(query, author=author)
+        if posts:
+            posts_list = []
+            for post in posts:
+                posts_list += [cls(**post[i]) for i in post]
+            return posts_list
+
+    @classmethod
+    def admin_find_posts_by_date(cls, *args):
+        if len(args) == 1:
+            main_query = """
+                            MATCH (post:Post)
+                            RETURN post
+                         """
+            posts = graph.data(main_query)
+            if posts:
+                post_list = []
+                date = khayyam3.JalaliDatetime.strptime(args[0], "%Y")
+                for post in posts:
+                    temp = [cls(**post[i]) for i in post]
+                    if khayyam3.JalaliDatetime.strptime(str(temp[0].publish_date[:4]), "%Y") >= date:
+                        post_list += [cls(**post[i]) for i in post]
+                return post_list
+
+        elif len(args) == 2:
+            main_query = """
+                            MATCH (post:Post)
+                            RETURN post
+                         """
+            posts = graph.data(main_query)
+            if posts:
+                post_list = []
+                date = khayyam3.JalaliDatetime.strptime(args[0] + "-" + args[1], "%Y-%m")
+                for post in posts:
+                    temp = [cls(**post[i]) for i in post]
+                    if khayyam3.JalaliDatetime.strptime("-".join(temp[0].publish_date.split(" ")[0].split("-")[:2]), "%Y-%m") >= date:
+                        post_list += [cls(**post[i]) for i in post]
+                return post_list
+
+        elif len(args) == 3:
+            main_query = """
+                            MATCH (post:Post)
+                            RETURN post
+                         """
+            posts = graph.data(main_query)
+            if posts:
+                post_list = []
+                date = khayyam3.JalaliDatetime.strptime(args[0] + "-" + args[1] + "-" + args[2], "%Y-%m-%d")
+                for post in posts:
+                    temp = [cls(**post[i]) for i in post]
+                    if khayyam3.JalaliDatetime.strptime("-".join(temp[0].publish_date.split(" ")[0].split("-")[:]), "%Y-%m-%d") >= date:
+                        post_list += [cls(**post[i]) for i in post]
+                return post_list
+
+        elif len(args) == 4:
+            main_query = """
+                            MATCH (post:Post)
+                            RETURN post
+                         """
+            posts = graph.data(main_query)
+            if posts:
+                post_list = []
+                date = khayyam3.JalaliDatetime.strptime(args[0] + "-" + args[1] + "-" + args[2] + "-" + args[3],
+                                                        "%Y-%m-%d-%H")
+                for post in posts:
+                    temp = [cls(**post[i]) for i in post]
+                    if khayyam3.JalaliDatetime.strptime("-".join(temp[0].publish_date.split(" ")[0].split("-")[:]) + " " + "".join(temp[0].publish_date.split(" ")[1].split(":")[0]), "%Y-%m-%d %H") >= date:
+                        post_list += [cls(**post[i]) for i in post]
+                return post_list
+
+    @classmethod
+    def admin_find_posts_by_title(cls, *args):
+        if len(args) == 1:
+            query = """
+                        MATCH (post:Post)
+                        RETURN post
+                        ORDER BY post.timestamp DESC
+                    """
+            posts = graph.data(query)
+            if posts:
+                post_list = []
+                for post in posts:
+                    temp = [cls(**post[i]) for i in post]
+                    if args[0] in temp[0].subject:
+                        post_list += [cls(**post[i]) for i in post]
+                return post_list
+
+        elif len(args) > 1:
+            all_list = []
+            query = """
+                            MATCH (post:Post)
+                            RETURN post
+                            ORDER BY post.timestamp DESC
+                        """
+            posts = graph.data(query)
+            if posts:
+                for title in args:
+                    for post in posts:
+                        temp = [cls(**post[i]) for i in post]
+                        if title in temp[0].subject:
+                            all_list += [cls(**post[i]) for i in post]
+            return all_list
+
+    @classmethod
+    def admin_find_posts_by_content(cls, *args):
+        if len(args) == 1:
+            query = """
+                        MATCH (post:Post)
+                        RETURN post
+                        ORDER BY post.timestamp DESC
+                    """
+            posts = graph.data(query, content=args[0])
+            if posts:
+                post_list = []
+                for post in posts:
+                    temp = [cls(**post[i]) for i in post]
+                    if args[0] in temp[0].content:
+                        post_list += [cls(**post[i]) for i in post]
+                return post_list
+
+        elif len(args) > 1:
+            all_list = []
+            query = """
+                            MATCH (post:Post)
+                            RETURN post
+                            ORDER BY post.timestamp DESC
+                        """
+            posts = graph.data(query)
+            for content in args:
+                if posts:
+                    for post in posts:
+                        temp = [cls(**post[i]) for i in post]
+                        if content in temp[0].subject:
+                            all_list += [cls(**post[i]) for i in post]
+            return all_list
+
+    @classmethod
+    def admin_find_all_posts_by_type(cls, _type):
+        query = """
+                    MATCH (post:Post)
+                    WHERE post.type_publication = {_type}
+                    RETURN post
+                    ORDER BY post.timestamp DESC
+                """
+        posts = graph.data(query, _type=_type)
+        if posts:
+            post_list = []
+            for post in posts:
+                post_list += [cls(**post[i]) for i in post]
+            return post_list
+
+    @classmethod
+    def admin_find_all_posts(cls):
+        query = """
+                    MATCH (post:Post)
+                    RETURN post
+                    ORDER BY post.timestamp DESC
+                """
+        posts = graph.data(query)
+        if posts:
+            post_list = []
+            for post in posts:
+                post_list += [cls(**post[i]) for i in post]
+            return post_list

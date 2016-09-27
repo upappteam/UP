@@ -17,11 +17,68 @@
             <form action="" method="post">
                 <div class="container">
                     <h3><label class="label label-info" for="search">Search posts by title, content, author, date</label></h3>
-                    <br>
-                    <input type="text"  placeholder="Search one user" name="search" id="search" value="{{ request.form.search }}">
+                    <div class="radio">
+                        <label for="radio1">
+                            <input type="radio" name="radio" id="radio1" value="author" checked>
+                            Searching by <strong>author</strong>
+                        </label>
+                    </div>
+                    <div class="radio">
+                        <label for="radio2">
+                            <input type="radio" name="radio" id="radio2" value="date">
+                            Searching by <strong>date</strong>
+                        </label>
+                    </div>
+                    <div class="radio">
+                        <label for="radio3">
+                            <input type="radio" name="radio" id="radio3" value="title">
+                            Searching in <strong>title</strong> posts
+                        </label>
+                    </div>
+                    <div class="radio">
+                        <label for="radio4">
+                            <input type="radio" name="radio" id="radio4" value="content">
+                            Searching in <strong>content</strong> of posts
+                        </label>
+                    </div>
+                    <input type="search"  placeholder="Search for posts" name="search" id="search" value="{{ request.form.search }}">
                     <button class="btn btn-primary" type="submit">Go</button>
                 </div>
             </form>
+        {% endif %}
+        {% if posts %}
+            {% if posts|length > 1 %}
+                <div class="container">
+                    <h3><strong>Post info:</strong></h3><strong></strong>
+                    {% for post in posts %}
+                        <p><strong>Author:</strong> {{ post.user_email }}</p>
+                        <p><strong>Title:</strong> {{ post.subject }}</p>
+                        <p><strong>Content:</strong> {{ post.content }}</p>
+                        <p><strong>Sent to:</strong> {{ post.to }}</p>
+                        <p><strong>Type publication:</strong> {{ post.type_publication }}</p>
+                        <p><strong>Published date:</strong> {{ post.publish_date }}</p>
+                        <p><strong>Post ID:</strong> {{ post._id }}</p>
+                        <hr>
+                    {% endfor %}
+                </div>
+            {% elif posts|length == 1 %}
+                <div class="container">
+                    <h3><strong>Post info:</strong></h3>
+                    <p><strong>Author:</strong> {{ posts[0].user_email }}</p>
+                    <p><strong>Title:</strong> {{ posts[0].subject }}</p>
+                    <p><strong>Content:</strong> {{ posts[0].content }}</p>
+                    <p><strong>Sent to:</strong> {{ posts[0].to }}</p>
+                    <p><strong>Type publication:</strong> {{ posts[0].type_publication }}</p>
+                    <p><strong>Published date:</strong> {{ posts[0].publish_date }}</p>
+                    <p><strong>Post ID:</strong> {{ posts[0]._id }}</p>
+                    <hr>
+                </div>
+            {% endif %}
+        {% endif %}
+        {% if msg %}
+            <div class="container has-error">
+                <h4><label class="label label-warning">{{ msg }}</label></h4>
+            </div>
         {% endif %}
     </article>
 {% endblock %}
@@ -29,12 +86,14 @@
     <aside>
         <br>
         <ul class="nav nav-pills nav-stacked">
-            <li role="presentation" class="active"><a href="{{ url_for('admins.find_posts', admin_id=admin_id) }}">Search for posts</a></li>
-            <li role="presentation"><a href="{{ url_for('admins.find_all_public', admin_id=admin_id) }}">Show all public posts</a></li>
-            <li role="presentation"><a href="{{ url_for('admins.find_all_private', admin_id=admin_id) }}">Show all private posts</a></li>
-            <li role="presentation"><a href="{{ url_for('admins.find_all_subsets', admin_id=admin_id) }}">Show all subsets posts</a></li>
-            <li role="presentation"><a href="{{ url_for('admins.find_all_uplene', admin_id=admin_id) }}">Show all upline posts</a></li>
-            <li role="presentation"><a href="{{ url_for('admins.find_all_direct', admin_id=admin_id) }}">Show all direct posts</a></li>
+            <li role="presentation" class={{ activate }}><a href="{{ url_for('admins.admin_posts', admin_id=admin_id) }}">Search for posts</a></li>
+            <li role="presentation" class={{ activate }}><a href="{{ url_for('admins.find_posts', admin_id=admin_id) }}">Show all posts</a></li>
+            <li role="presentation" class={{ activate }}><a href="{{ url_for('admins.find_all_public', admin_id=admin_id) }}">Show all public posts</a></li>
+            <li role="presentation" class={{ activate }}><a href="{{ url_for('admins.find_all_private', admin_id=admin_id) }}">Show all private posts</a></li>
+            <li role="presentation" class={{ activate }}><a href="{{ url_for('admins.find_all_subsets', admin_id=admin_id) }}">Show all subsets posts</a></li>
+            <li role="presentation" class={{ activate }}><a href="{{ url_for('admins.find_all_uplines', admin_id=admin_id) }}">Show all uplines posts</a></li>
+            <li role="presentation" class={{ activate }}><a href="{{ url_for('admins.find_all_upline', admin_id=admin_id) }}">Show all upline posts</a></li>
+            <li role="presentation" class={{ activate }}><a href="{{ url_for('admins.find_all_direct', admin_id=admin_id) }}">Show all direct posts</a></li>
         </ul>
     </aside>
 {% endblock %}
