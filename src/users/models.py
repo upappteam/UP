@@ -273,3 +273,16 @@ class User(UserMixin, object):
     #         RETURN user
     #     """
     #     user
+
+    @classmethod
+    def admin_find_all_users(cls):
+        query = """
+                    MATCH (user:User)
+                    RETURN user
+                """
+        users = graph.data(query)
+        if users:
+            user_list = []
+            for user in users:
+                user_list += [cls(**user[i]) for i in user]
+            return user_list

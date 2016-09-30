@@ -1,4 +1,5 @@
-from flask import render_template, redirect, flash, url_for, request
+from flask import render_template, flash, request, redirect, url_for
+from flask_login import current_user
 
 from . import bp_admin
 from src.users.models import User
@@ -8,8 +9,8 @@ from src.admin.models import Admin
 
 @bp_admin.route('/home/<string:admin_id>')
 def admin_home(admin_id):
-    admin = Admin.classify(Admin.find_admin_id(admin_id))
-    return render_template('admin/home.html', admin_id=admin._id)
+    # TODO Make edit and delete for posts sent by admin
+    return render_template('admin/home.html', admin_id=admin_id)
 
 
 @bp_admin.route('/users/<string:admin_id>', methods=['GET', 'POST'])
@@ -277,9 +278,41 @@ def find_all_direct(admin_id):
     return render_template('admin/posts.html', admin_id=admin_id, activate='active', search=search, posts=posts, msg=msg)
 
 
-@bp_admin.route('/messages/send/<string:admin_id>')
+@bp_admin.route('/messages/send/<string:admin_id>', methods=['GET', 'POST'])
 def admin_send_message(admin_id):
-    pass
+    if request.method == 'POST':
+        mode = request.form["radio"]
+        admin = Admin.find_admin_id(admin_id)
+        # print(admin_data)
+        # if admin_data:
+            # admin = Admin.find_admin_email(admin_data["email"])
+        # else:
+        #     return redirect(url_for("auth.login"))
+        if mode == 'one':
+            email = request.form["user_email"]
+            user = User.find_by_email(email)
+            if user:
+                subject = request.form["title"]
+                content = request.form["content"]
+                Post("admin", subject, content).admin_insert_post_by_type(admin, email, 'private')
+                posts = Post.admin_sent_posts(admin["email"])
+                flash("Message sent to {0}".format(email))
+                return render_template("admin/home.html", admin_id=admin_id, posts=posts)
+            else:
+                flash("The user you choose by {} does not exist.".format(email))
+                return render_template("admin/send_message.html", admin_id=admin_id)
+        elif mode == 'all':
+            subject = request.form["title"]
+            content = request.form["content"]
+            users = User.admin_find_all_users()
+            new_post = Post(current_user.email, subject, content)
+            new_post.admin_insert_post(admin, 'private')
+            for user in users:
+                Post.connect(user.email, new_post._id, 'private')
+            posts = Post.admin_sent_posts()
+            flash("Post sent to all.")
+            return render_template("admin/home.html", admin_id=admin_id, posts=posts)
+    return render_template("admin/send_message.html", admin_id=admin_id)
 
 
 @bp_admin.route('/messages/received/<string:admin_id>')

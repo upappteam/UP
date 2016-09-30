@@ -373,3 +373,48 @@ class Post(object):
             for post in posts:
                 post_list += [cls(**post[i]) for i in post]
             return post_list
+
+    @classmethod
+    def admin_sent_posts(cls, admin_email):
+        query = """
+                    MATCH (post:Post)
+                    WHERE post.user_email = {admin}
+                    RETURN post
+                    ORDER BY post.timestamp
+                """
+        posts = graph.data(query, admin=admin_email)
+        if posts:
+            post_list = []
+            for post in posts:
+                post_list += [cls(**post[i]) for i in post]
+            return post_list
+
+    def admin_insert_post_by_type(self, admin_node, to, _type):
+        new_post = Node("Post", user_email=admin_node["email"],
+                        subject=self.subject,
+                        content=self.content,
+                        to=to,
+                        type_publication=self.type_publication,
+                        publish_date=self.publish_date,
+                        _id=self._id)
+
+        graph.create(new_post)
+        rel1 = Relationship(admin_node, "PUBLISHED", new_post, type=_type)
+        graph.create(rel1)
+
+        user = User.find_by_email(to)
+        rel2 = Relationship(new_post, "MESSAGE", user, type=_type)
+        graph.create(rel2)
+
+    def admin_insert_post(self, admin_node, _type):
+        new_post = Node("Post", user_email=admin_node["email"],
+                        subject=self.subject,
+                        content=self.content,
+                        to="all",
+                        timestamp=int(khayyam3.JalaliDatetime.today().strftime("%Y%m%d%H%M%S")),
+                        type_publication=self.type_publication,
+                        publish_date=self.publish_date,
+                        _id=self._id)
+        graph.create(new_post)
+        rel = Relationship(admin_node, "PUBLISHED", new_post, type=_type)
+        graph.create(rel)

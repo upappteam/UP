@@ -37,7 +37,10 @@ def login():
             if Utils.check_password(user.password, password):
                 flash("Log in successful.")
                 login_user(user, remember_me)
-                return redirect(url_for('users.home', user_id=user._id))
+                if user.name == 'none':
+                    return redirect(url_for("users.info", user_id=user._id))
+                else:
+                    return redirect(url_for('users.home', user_id=user._id))
             else:
                 flash("Your password was wrong.")
                 return redirect(url_for('auth.login'))

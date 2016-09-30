@@ -6,14 +6,57 @@
 
 {% block article %}
     <article>
-        {% block bar %}
-            <ul class="nav nav-tabs">
-                <li role="presentation"><a href="{{ url_for('admins.admin_home', admin_id=admin_id) }}">Home</a></li>
-                <li role="presentation"><a href="{{ url_for('admins.admin_users', admin_id=admin_id) }}">Users</a></li>
-                <li role="presentation"><a href="{{ url_for('admins.admin_posts', admin_id=admin_id) }}">Posts</a></li>
-                <li role="presentation" class="active"><a href="{{ url_for('admins.admin_send_message', admin_id=admin_id) }}">Send message</a></li>
-                <li role="presentation"><a href="{{ url_for('admins.admin_read_message', admin_id=admin_id) }}">Read message</a></li>
-            </ul>
-        {% endblock %}
+        <ul class="nav nav-tabs">
+            <li role="presentation"><a href="{{ url_for('admins.admin_home', admin_id=admin_id) }}">Home</a></li>
+            <li role="presentation"><a href="{{ url_for('admins.admin_users', admin_id=admin_id) }}">Users</a></li>
+            <li role="presentation"><a href="{{ url_for('admins.admin_posts', admin_id=admin_id) }}">Posts</a></li>
+            <li role="presentation" class="active"><a href="{{ url_for('admins.admin_send_message', admin_id=admin_id) }}">Send message</a></li>
+            <li role="presentation"><a href="{{ url_for('admins.admin_read_message', admin_id=admin_id) }}">Read message</a></li>
+        </ul>
+        <div class="container">
+            <h2><label class="label label-success">Send message to users or one user.</label></h2>
+            <form action="" method="post" class="form-group">
+                <div class="container">
+                    <h3><label class="label label-info" for="search">Enter a user email to send message or select send to all to send message to all users.</label></h3>
+                    <div class="radio">
+                        <label for="radio1">
+                            <input type="radio" name="radio" id="radio1" value="one" checked>
+                            Send message to <strong>one user</strong> .
+                        </label>
+                    </div>
+                    <div class="radio">
+                        <label for="radio2">
+                            <input type="radio" name="radio" id="radio2" value="all">
+                            Send message to <strong>all user</strong> .
+                        </label>
+                    </div>
+                </div>
+                <div>
+                    <h4><label class="label label-default" for="email">By enter a user email send a private message to that user</label></h4>
+                    <input type="text"  placeholder="User Email" name="user_email" id="email" value="{{ request.form.user_email }}">
+                </div>
+                <br>
+                <div>
+                    <div>
+                        <label for="title">Title:</label>
+                    </div>
+                    <div>
+                        <input type="text" placeholder="Title" name="title" id="title" value="{{ request.form.title }}">
+                    </div>
+                </div>
+                <div>
+                    <div>
+                        <label for="content">Content</label>
+                    </div>
+                    <div>
+                        <textarea class="form-control" rows="3" placeholder="Content" name="content" id="content"></textarea>
+                    </div>
+                </div>
+                <div>
+                    <br>
+                    <button class="btn btn-primary" type="submit">Send</button>
+                </div>
+            </form>
+        </div>
     </article>
 {% endblock %}

@@ -35,5 +35,8 @@ def load_user(user_id):
     if user_id is None:
         return redirect(url_for("auth.login"))
     user = User.find_by_id(user_id)
+    admin = Admin.find_admin_id(user_id)
+    if admin:
+        return admin
     if user:
         return user

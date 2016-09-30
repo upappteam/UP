@@ -34,7 +34,11 @@ class Admin(UserMixin, object):
 
     @classmethod
     def classify(cls, admin_data):
-        return cls(**admin_data)
+        return cls(name=admin_data["name"],
+                   family=admin_data["family"],
+                   email=admin_data["email"],
+                   password=admin_data["password"],
+                   _id=admin_data["_id"])
 
     @staticmethod
     def find_admin_id(_id):
@@ -50,6 +54,10 @@ class Admin(UserMixin, object):
 
     def get_id(self):
         return self._id
+
+    @property
+    def is_anonymous(self):
+        return False
 
     @staticmethod
     def find_all_public_posts():

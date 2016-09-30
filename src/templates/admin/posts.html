@@ -49,7 +49,7 @@
         {% if posts %}
             {% if posts|length > 1 %}
                 <div class="container">
-                    <h3><strong>Post info:</strong></h3><strong></strong>
+                    <h3><strong>Post info:</strong></h3>
                     {% for post in posts %}
                         <p><strong>Author:</strong> {{ post.user_email }}</p>
                         <p><strong>Title:</strong> {{ post.subject }}</p>
