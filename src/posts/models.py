@@ -3,6 +3,7 @@ import khayyam3
 from py2neo import Graph, Relationship, Node
 
 from src.users.models import User
+from config import Admin as ADMINS
 
 
 graph = Graph()
@@ -375,14 +376,14 @@ class Post(object):
             return post_list
 
     @classmethod
-    def admin_sent_posts(cls, admin_email):
+    def admin_sent_posts(cls):
         query = """
                     MATCH (post:Post)
-                    WHERE post.user_email = {admin}
+                    WHERE (post.user_email = 'mohamad@gmail.com' OR post.user_email = 'majid@gmail.com')
                     RETURN post
                     ORDER BY post.timestamp
                 """
-        posts = graph.data(query, admin=admin_email)
+        posts = graph.data(query)
         if posts:
             post_list = []
             for post in posts:
@@ -418,3 +419,18 @@ class Post(object):
         graph.create(new_post)
         rel = Relationship(admin_node, "PUBLISHED", new_post, type=_type)
         graph.create(rel)
+
+    @classmethod
+    def admin_read_messages(cls):
+        query = """
+                    MATCH (post:Post)
+                    WHERE post.to = {admin2} OR post.to = {admin1}
+                    RETURN post
+                    ORDER BY post.timestamp
+                """
+        posts = graph.data(query, admin1=ADMINS.ADMIN_1[0]["email"], admin2=ADMINS.ADMIN_2[0]["email"])
+        if posts:
+            post_list = []
+            for post in posts:
+                post_list += [cls(**post[i]) for i in post]
+            return post_list

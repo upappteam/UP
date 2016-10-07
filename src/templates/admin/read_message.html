@@ -6,14 +6,50 @@
 
 {% block article %}
     <article>
-        {% block bar %}
-            <ul class="nav nav-tabs">
-                <li role="presentation"><a href="{{ url_for('admins.admin_home', admin_id=admin_id) }}">Home</a></li>
-                <li role="presentation"><a href="{{ url_for('admins.admin_users', admin_id=admin_id) }}">Users</a></li>
-                <li role="presentation"><a href="{{ url_for('admins.admin_posts', admin_id=admin_id) }}">Posts</a></li>
-                <li role="presentation"><a href="{{ url_for('admins.admin_send_message', admin_id=admin_id) }}">Send message</a></li>
-                <li role="presentation" class="active"><a href="{{ url_for('admins.admin_read_message', admin_id=admin_id) }}">Read message</a></li>
-            </ul>
-        {% endblock %}
+        <ul class="nav nav-tabs">
+            <li role="presentation"><a href="{{ url_for('admins.admin_home', admin_id=admin_id) }}">Home</a></li>
+            <li role="presentation"><a href="{{ url_for('admins.admin_users', admin_id=admin_id) }}">Users</a></li>
+            <li role="presentation"><a href="{{ url_for('admins.admin_posts', admin_id=admin_id) }}">Posts</a></li>
+            <li role="presentation"><a href="{{ url_for('admins.admin_send_message', admin_id=admin_id) }}">Send message</a></li>
+            <li role="presentation" class="active"><a href="{{ url_for('admins.admin_read_message', admin_id=admin_id) }}">Read message</a></li>
+        </ul>
+        <section>
+            <br>
+            <br>
+            <br>
+            {% if posts %}
+                <h3><strong>Post info:</strong></h3>
+                {% if posts|length == 1 %}
+                    <div class="container">
+                        <h3><strong>Post info:</strong></h3>
+                        <p><strong>Author:</strong> {{ posts[0].user_email }}</p>
+                        <p><strong>Title:</strong> {{ posts[0].subject }}</p>
+                        <p><strong>Content:</strong> {{ posts[0].content }}</p>
+                        <p><strong>Sent to:</strong> {{ posts[0].to }}</p>
+                        <p><strong>Type publication:</strong> {{ posts[0].type_publication }}</p>
+                        <p><strong>Published date:</strong> {{ posts[0].publish_date }}</p>
+                        <p><strong>Post ID:</strong> {{ posts[0]._id }}</p>
+                        <hr>
+                    </div>
+                {% elif posts|length > 1 %}
+                    {% for post in posts %}
+                        <div class="container">
+                            <p><strong>Author:</strong> {{ post.user_email }}</p>
+                            <p><strong>Title:</strong> {{ post.subject }}</p>
+                            <p><strong>Content:</strong> {{ post.content }}</p>
+                            <p><strong>Sent to:</strong> {{ post.to }}</p>
+                            <p><strong>Type publication:</strong> {{ post.type_publication }}</p>
+                            <p><strong>Published date:</strong> {{ post.publish_date }}</p>
+                            <p><strong>Post ID:</strong> {{ post._id }}</p>
+                            <hr>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% else %}
+                <div class="container">
+                    <p><strong>There is no sent message for admins.</strong></p>
+                </div>
+            {% endif %}
+        </section>
     </article>
 {% endblock %}

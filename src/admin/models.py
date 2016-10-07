@@ -59,6 +59,14 @@ class Admin(UserMixin, object):
     def is_anonymous(self):
         return False
 
+    @property
+    def is_authenticated(self):
+        return True
+
+    @property
+    def is_active(self):
+        return True
+
     @staticmethod
     def find_all_public_posts():
         query = """

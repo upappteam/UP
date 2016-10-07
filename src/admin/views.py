@@ -1,4 +1,4 @@
-from flask import render_template, flash, request, redirect, url_for
+from flask import render_template, flash, request, redirect, url_for, session
 from flask_login import current_user
 
 from . import bp_admin
@@ -10,6 +10,9 @@ from src.admin.models import Admin
 @bp_admin.route('/home/<string:admin_id>')
 def admin_home(admin_id):
     # TODO Make edit and delete for posts sent by admin
+    posts = Post.admin_sent_posts()
+    if posts:
+        return render_template('admin/home.html', admin_id=admin_id, posts=posts)
     return render_template('admin/home.html', admin_id=admin_id)
 
 
@@ -283,11 +286,7 @@ def admin_send_message(admin_id):
     if request.method == 'POST':
         mode = request.form["radio"]
         admin = Admin.find_admin_id(admin_id)
-        # print(admin_data)
-        # if admin_data:
-            # admin = Admin.find_admin_email(admin_data["email"])
-        # else:
-        #     return redirect(url_for("auth.login"))
+
         if mode == 'one':
             email = request.form["user_email"]
             user = User.find_by_email(email)
@@ -295,7 +294,7 @@ def admin_send_message(admin_id):
                 subject = request.form["title"]
                 content = request.form["content"]
                 Post("admin", subject, content).admin_insert_post_by_type(admin, email, 'private')
-                posts = Post.admin_sent_posts(admin["email"])
+                posts = Post.admin_sent_posts()
                 flash("Message sent to {0}".format(email))
                 return render_template("admin/home.html", admin_id=admin_id, posts=posts)
             else:
@@ -305,7 +304,7 @@ def admin_send_message(admin_id):
             subject = request.form["title"]
             content = request.form["content"]
             users = User.admin_find_all_users()
-            new_post = Post(current_user.email, subject, content)
+            new_post = Post("admin", subject, content)
             new_post.admin_insert_post(admin, 'private')
             for user in users:
                 Post.connect(user.email, new_post._id, 'private')
@@ -317,4 +316,5 @@ def admin_send_message(admin_id):
 
 @bp_admin.route('/messages/received/<string:admin_id>')
 def admin_read_message(admin_id):
-    pass
+    posts = Post.admin_read_messages()
+    return render_template("admin/read_message.html", admin_id=admin_id, posts=posts)

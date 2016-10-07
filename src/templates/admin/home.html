@@ -38,15 +38,13 @@
 
 {% block article %}
     <article>
-        {% block bar %}
-            <ul class="nav nav-tabs">
-                <li role="presentation" class="active"><a href="{{ url_for('admins.admin_home', admin_id=admin_id) }}">Home</a></li>
-                <li role="presentation"><a href="{{ url_for('admins.admin_users', admin_id=admin_id) }}">Users</a></li>
-                <li role="presentation"><a href="{{ url_for('admins.admin_posts', admin_id=admin_id) }}">Posts</a></li>
-                <li role="presentation"><a href="{{ url_for('admins.admin_send_message', admin_id=admin_id) }}">Send message</a></li>
-                <li role="presentation"><a href="{{ url_for('admins.admin_read_message', admin_id=admin_id) }}">Read message</a></li>
-            </ul>
-        {% endblock %}
+        <ul class="nav nav-tabs">
+            <li role="presentation" class="active"><a href="{{ url_for('admins.admin_home', admin_id=admin_id) }}">Home</a></li>
+            <li role="presentation"><a href="{{ url_for('admins.admin_users', admin_id=admin_id) }}">Users</a></li>
+            <li role="presentation"><a href="{{ url_for('admins.admin_posts', admin_id=admin_id) }}">Posts</a></li>
+            <li role="presentation"><a href="{{ url_for('admins.admin_send_message', admin_id=admin_id) }}">Send message</a></li>
+            <li role="presentation"><a href="{{ url_for('admins.admin_read_message', admin_id=admin_id) }}">Read message</a></li>
+        </ul>
         <section>
             <br>
             <br>

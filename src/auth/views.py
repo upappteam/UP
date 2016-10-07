@@ -1,5 +1,5 @@
 from flask_login import login_required, login_user, logout_user
-from flask import request, redirect, url_for, flash, render_template
+from flask import request, redirect, url_for, flash, render_template, session
 
 from . import bp_auth
 from src.admin.models import Admin
@@ -20,7 +20,7 @@ def login():
             admin = Admin.classify(Admin.find_admin_email(phone_number))
 
             if password == admin.password:
-                login_user(admin, remember_me)
+                session["email"] = admin.email
                 return redirect(url_for('admins.admin_home', admin_id=admin._id))
 
         user_data = User.find_one(phone_number)
