@@ -61,6 +61,12 @@
                         <p><strong>Type publication:</strong> {{ posts[0].type_publication }}</p>
                         <p><strong>Published date:</strong> {{ posts[0].publish_date }}</p>
                         <p><strong>Post ID:</strong> {{ posts[0]._id }}</p>
+                        {% if post[0].user_email == admin_email %}
+                            <div>
+                                <a href="{{ url_for('admins.admin_posts_edit', post_id=post._id) }}"><button class="btn btn-warning">Edit</button></a>
+                                <a href="{{ url_for('admins.admin_posts_delete', post_id=post._id) }}"><button class="btn btn-danger">Delete</button></a>
+                            </div>
+                        {% endif %}
                         <hr>
                     </div>
                 {% elif posts|length > 1 %}
@@ -73,6 +79,12 @@
                             <p><strong>Type publication:</strong> {{ post.type_publication }}</p>
                             <p><strong>Published date:</strong> {{ post.publish_date }}</p>
                             <p><strong>Post ID:</strong> {{ post._id }}</p>
+                            {% if post.user_email == admin_email %}
+                                <div>
+                                    <a href="{{ url_for('admins.admin_posts_edit', post_id=post._id) }}"><button class="btn btn-warning">Edit</button></a>
+                                    <a href="{{ url_for('admins.admin_posts_delete', post_id=post._id) }}"><button class="btn btn-danger">Delete</button></a>
+                                </div>
+                            {% endif %}
                             <hr>
                         </div>
                     {% endfor %}

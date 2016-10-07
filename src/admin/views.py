@@ -1,5 +1,4 @@
 from flask import render_template, flash, request, redirect, url_for, session
-from flask_login import current_user
 
 from . import bp_admin
 from src.users.models import User
@@ -9,11 +8,35 @@ from src.admin.models import Admin
 
 @bp_admin.route('/home/<string:admin_id>')
 def admin_home(admin_id):
-    # TODO Make edit and delete for posts sent by admin
     posts = Post.admin_sent_posts()
     if posts:
-        return render_template('admin/home.html', admin_id=admin_id, posts=posts)
-    return render_template('admin/home.html', admin_id=admin_id)
+        return render_template('admin/home.html', admin_id=admin_id, posts=posts, admin_email=session["email"])
+    return render_template('admin/home.html', admin_id=admin_id, admin_email=session["email"])
+
+
+@bp_admin.route('/posts_sent/edit/<string:post_id>', methods=['GET', 'POST'])
+def admin_posts_edit(post_id):
+    admin = Admin.find_admin_email(session["email"])
+    post = Post.find_one(post_id)
+
+    if request.method == 'POST':
+        title = request.form["title"]
+        content = request.form["content"]
+        Post.admin_sent_posts_edit(post_id, title, content)
+        return redirect(url_for('admins.admin_home', admin_id=admin["_id"]))
+
+    request.form.title = post["subject"]
+    request.form.content = post["content"]
+
+    return render_template("admin/edit.html", admin_id=admin["_id"])
+
+
+@bp_admin.route('/posts_sent/delete/<string:post_id>')
+def admin_posts_delete(post_id):
+    admin = Admin.find_admin_email(session["email"])
+    Post.admin_sent_posts_delete(post_id)
+    flash("Post DELETED")
+    return redirect(url_for('admins.admin_home', admin_id=admin["_id"]))
 
 
 @bp_admin.route('/users/<string:admin_id>', methods=['GET', 'POST'])

@@ -1,0 +1,48 @@
+{% extends "admin/home.html" %}
+
+{% block title %}
+    Admin edit message
+{% endblock %}
+
+{% block article %}
+    <article>
+        <div class="container">
+            <form action="" method="post" class="form-group">
+                <h3><label class="label label-info">Edit sent post</label></h3>
+                <br>
+                <div>
+                    <div>
+                        <label for="title">Title:</label>
+                    </div>
+                    <div>
+                        <input type="text" placeholder="Title" name="title" id="title" value="{{ request.form.title }}">
+                    </div>
+                </div>
+                <div>
+                    <div>
+                        <label for="content">Content</label>
+                    </div>
+                    <div>
+                        <textarea class="form-control" rows="3" placeholder="Content" name="content" id="content">{{ request.form.content }}</textarea>
+                    </div>
+                </div>
+                <div>
+                    <br>
+                    <button class="btn btn-primary" type="submit">Edit</button>
+                </div>
+            </form>
+        </div>
+        <br>
+        <br>
+        <br>
+    </article>
+{% endblock %}
+
+{% block aside %}
+    <aside>
+        <br>
+        <ul class="nav nav-pills nav-stacked">
+            <li role="presentation" class="active"><a href="{{ url_for('admins.admin_home', admin_id=admin_id) }}">Back to home</a></li>
+        </ul>
+    </aside>
+{% endblock %}

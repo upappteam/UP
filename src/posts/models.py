@@ -434,3 +434,36 @@ class Post(object):
             for post in posts:
                 post_list += [cls(**post[i]) for i in post]
             return post_list
+
+    @staticmethod
+    def admin_sent_posts_edit(_id, title, content):
+        post = Post.find_one(_id)
+        post["subject"] = title
+        post["content"] = content
+        post["publish_date"] = khayyam3.JalaliDatetime.today().strftime("%Y-%m-%d %H:%M:%S")
+        post["timestamp"] = int(khayyam3.JalaliDatetime.today().strftime("%Y%m%d%H%M%S"))
+        post.push()
+
+    @classmethod
+    def admin_sent_posts_delete(cls, post_id):
+        # Find MESSAGE relations and delete them
+        query1 = """
+                    MATCH (:Admin)-[:PUBLISHED]->(post:Post)-[mes:MESSAGE]->(:User)
+                    WHERE post._id = {post_id}
+                    RETURN mes
+                """
+        message_rels = graph.data(query1, post_id=post_id)
+        for i in message_rels:
+            graph.separate(i['mes'])
+        # Find PUBLISHED relation and delete that
+        query2 = """
+                        MATCH (:Admin)-[pub:PUBLISHED]->(post:Post)
+                        WHERE post._id = {post_id}
+                        RETURN pub
+                    """
+        published_rel = graph.data(query2, post_id=post_id)
+        for i in published_rel:
+            graph.separate(i['pub'])
+        # Find post published by admin and delete that
+        post = Post.find_one(post_id)
+        graph.delete(post)
