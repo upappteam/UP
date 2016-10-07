@@ -56,7 +56,7 @@ def admin_users(admin_id):
             else:
                 msg = "Not found any user by {0}".format(word)
                 return render_template("admin/users.html", admin_id=admin_id,
-                                       search=search, msg=msg, activate="active")
+                                       search=search, msg=msg, activate="active", nothing=True)
 
         elif word.isalpha() and '@' not in word:
             if " " in word:
@@ -70,7 +70,7 @@ def admin_users(admin_id):
                     else:
                         msg = "Not found any user by {0}".format(word)
                         return render_template("admin/users.html", admin_id=admin_id,
-                                               search=search, msg=msg, activate="active")
+                                               search=search, msg=msg, activate="active", nothing=True)
 
                 elif len(name_family) == 3:
                     name, mid_name, family = name_family
@@ -83,7 +83,7 @@ def admin_users(admin_id):
                     else:
                         msg = "Not found any user by {0}".format(word)
                         return render_template("admin/users.html", admin_id=admin_id,
-                                               search=search, msg=msg, activate="active")
+                                               search=search, msg=msg, activate="active", nothing=True)
 
             elif " " not in word:
                 users = User.search_by_name_family(name=word, family=word)
@@ -93,7 +93,7 @@ def admin_users(admin_id):
                 else:
                     msg = "Not found any user by {0}".format(word)
                     return render_template("admin/users.html", admin_id=admin_id,
-                                           search=search, msg=msg, activate="active")
+                                           search=search, msg=msg, activate="active", nothing=True)
 
         elif '@' in word:
             users = []
@@ -104,14 +104,14 @@ def admin_users(admin_id):
             else:
                 msg = "Not found any user by {0}".format(word)
                 return render_template("admin/users.html", admin_id=admin_id,
-                                       search=search, msg=msg, activate="active")
+                                       search=search, msg=msg, activate="active", nothing=True)
 
         else:
             msg = "Not found any user by {0}".format(word)
             return render_template("admin/users.html", admin_id=admin_id,
-                                   search=search, msg=msg, activate="active")
+                                   search=search, msg=msg, activate="active", nothing=True)
 
-    return render_template("admin/users.html", admin_id=admin_id, search=search, msg=msg, activate="active")
+    return render_template("admin/users.html", admin_id=admin_id, search=search, msg=msg, activate="active", nothing=True)
 
 
 @bp_admin.route('/show_all_users/<string:admin_id>')

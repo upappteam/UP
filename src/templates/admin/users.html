@@ -21,6 +21,16 @@
                     <button class="btn btn-primary" type="submit">Go</button>
                 </div>
             </form>
+            {% if nothing %}
+                <br>
+                <br>
+                <br>
+                <br>
+                <br>
+                <br>
+                <br>
+                <br>
+            {% endif %}
         {% endif %}
         {% if users %}
             {% if users|length > 1 %}
