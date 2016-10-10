@@ -13,7 +13,7 @@
                         <p>Subject: {{ post.subject }}</p>
                     </div>
                     <div>
-                        <p>Author: {{ post.user_email }}</p>
+                        <p>Author: {% if user_email != post.user_email %}<a href="{{ url_for('users.find_user_by_email_and_redirect', user_email=post.user_email) }}"><button type="button" class="btn btn-info">{% endif %}{{ post.user_email }}</button></a></p>
                     </div>
                     <div>
                         <p>Published date: {{ post.publish_date }}</p>

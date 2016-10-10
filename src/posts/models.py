@@ -158,13 +158,14 @@ class Post(object):
         graph.separate(rel)
 
     @classmethod
-    def find_all_public(cls):
+    def find_all_public(cls, _id):
         query = """
-            MATCH (user:User)-[:PUBLISHED{type: {_type}}]->(post:Post)
+            MATCH (user:User)-[:FOLLOW]->(:User)-[:PUBLISHED{type: {_type}}]->(post:Post)
+            WHERE user._id = {_id}
             RETURN post
             ORDER BY post.timestamp DESC
         """
-        posts = graph.data(query, _type='public')
+        posts = graph.data(query, _id=_id, _type='public')
 
         if posts:
             post_list = []

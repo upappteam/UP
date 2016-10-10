@@ -88,6 +88,11 @@
             <a href="{{ url_for('posts.posts_for_directs', user_id=user_id) }}"><button class="btn btn-success">Posts for directs</button></a>
             <br>
         </div>
+        <div class="container">
+            <br>
+            <a href="{{ url_for('users.view_profile', user_id=user_id) }}"><button class="btn btn-success">Personal info</button></a>
+            <br>
+        </div>
     </article>
 {% endblock %}
 

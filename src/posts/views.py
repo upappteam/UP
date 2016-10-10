@@ -154,11 +154,11 @@ def view_public_posts():
     View all public post sent by everyone.
     :return: A page of all public posts.
     """
-    posts = Post.find_all_public()
+    posts = Post.find_all_public(current_user._id)
     message = "There is no public posts."
     return render_template('post/public_posts.html',
                            posts=posts,
-                           title='Public posts', msg=message)
+                           title='Public posts', msg=message, user_email=current_user.email)
 
 
 @bp_post.route('/from_subsets/<string:user_id>')

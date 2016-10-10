@@ -1,0 +1,41 @@
+{% extends "user/home.html" %}
+
+{% block article %}
+    <article>
+        <div class="container">
+            <h3><strong>{{ user.name }}</strong> profile</h3>
+            <p><strong>Full name: </strong>{{ user.name }} {{ user.family }}</p>
+            <p><strong>Gender: </strong>{{ user.gender }}</p>
+            <p><strong>Company: </strong>{{ user.company }}</p>
+            <p><strong>Register date: </strong>{{ user.register_date }}</p>
+            <p><strong>Email: </strong>{{ user.email }}</p>
+            <div class="container">
+                <span>
+                {% if current_user._id != user._id %}
+                    <a href="{{ url_for('users.follow', user_id=user._id) }}"><button class="btn btn-info" type="button" id="follow" name="follow">{{ request.form.follow }}</button></a>
+                {% endif %}
+                {% if current_user._id == user._id %}
+                    <a href="{{ url_for('users.edit_profile', user_id=user_id) }}"><button class="btn btn-info" type="button" id="follow" name="follow">Edit Profile</button></a>
+                {% endif %}
+                </span>
+            </div>
+            <br>
+            <br>
+            <br>
+            <br>
+            <br>
+            <br>
+            <br>
+            <br>
+            <br>
+            <br>
+            <br>
+        </div>
+    </article>
+{% endblock %}
+
+{% block aside %}
+{% endblock %}
+
+{% block footer %}
+{% endblock %}

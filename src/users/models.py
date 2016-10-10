@@ -286,3 +286,33 @@ class User(UserMixin, object):
             for user in users:
                 user_list += [cls(**user[i]) for i in user]
             return user_list
+
+    @staticmethod
+    def check_follow_relation(current_user_id, another_user_id):
+        query = """
+                    MATCH (current:User)-[follow:FOLLOW]->(another:User)
+                    WHERE (current._id = {current_user_id}) AND (another._id = {another_user_id})
+                    RETURN follow
+                """
+        rel = graph.data(query, current_user_id=current_user_id, another_user_id=another_user_id)
+        if rel:
+            return True
+        else:
+            return False
+
+    @staticmethod
+    def follow_user(current_user_id, another_user_id):
+        current_user_node = graph.find_one('User', property_key='_id', property_value=current_user_id)
+        another_user_node = graph.find_one('User', property_key='_id', property_value=another_user_id)
+        rel = Relationship(current_user_node, "FOLLOW", another_user_node)
+        if current_user_id != another_user_id:
+            graph.create(rel)
+
+    @staticmethod
+    def un_follow_user(current_user_id, another_user_id):
+        current_user_node = graph.find_one('User', property_key='_id', property_value=current_user_id)
+        another_user_node = graph.find_one('User', property_key='_id', property_value=another_user_id)
+
+        rel = graph.match_one(current_user_node, "FOLLOW", another_user_node)
+        print(rel)
+        graph.separate(rel)

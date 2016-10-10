@@ -147,3 +147,39 @@ def search(word):
 
     flash("Could not find any user {}".format(word_))
     return redirect(url_for('users.home', user_id=current_user._id))
+
+
+@bp_user.route('/profile/view/<string:user_id>')
+@login_required
+def view_profile(user_id):
+    user = User.find_by_id(user_id)
+    if not User.check_follow_relation(current_user._id, user_id):
+        request.form.follow = "Follow"
+    else:
+        request.form.follow = "Un Follow"
+    return render_template("user/personal_page.html", user=user, user_id=user_id)
+
+
+@bp_user.route('/profile/edit/<string:user_id>')
+@login_required
+def edit_profile(user_id):
+    # TODO Make edit page
+    user = User.find_by_id(user_id)
+    return render_template("user/personal_page.html", user=user, user_id=user_id, current_user=current_user)
+
+
+@bp_user.route('/find_user_by_email/<string:user_email>')
+@login_required
+def find_user_by_email_and_redirect(user_email):
+    user = User.classify1(User.find_by_email(user_email))
+    return redirect(url_for('users.view_profile', user_id=user._id))
+
+
+@bp_user.route('/follow/<string:user_id>')
+@login_required
+def follow(user_id):
+    if not User.check_follow_relation(current_user._id, user_id):
+        User.follow_user(current_user._id, user_id)
+    elif User.check_follow_relation(current_user._id, user_id):
+        User.un_follow_user(current_user._id, user_id)
+    return redirect(url_for('users.view_profile', user_id=user_id))

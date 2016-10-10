@@ -41,7 +41,7 @@ fieldset {
 }
 
 textarea {
-    resize: vertical;
+    resize: none;
 }
 
 .browserupgrade {
