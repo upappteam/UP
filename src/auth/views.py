@@ -54,6 +54,10 @@ def login():
 
 @bp_auth.route('/register', methods=['GET', 'POST'])
 def register():
+    if current_user.is_authenticated == True:
+        flash('You are registerd before!')
+        return redirect(url_for('users.home',user_id=current_user._id))
+
     form = RegisterForm()
     if request.method == 'POST':
         phone_number = form.phone_number.data
