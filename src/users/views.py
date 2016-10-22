@@ -7,9 +7,11 @@ from src.users.models import User
 from src.users.utils import Utils
 from src.users.forms import ProfileForm, ChangePasswordForm
 
+from src.common.models import just_current_user
 
 @bp_user.route('/info/<string:user_id>', methods=['GET', 'POST'])
 @login_required
+@just_current_user
 def info(user_id):
     user = User.find_by_id(user_id)
 
@@ -58,9 +60,9 @@ def info(user_id):
                 return redirect(url_for('users.info', user_id=user._id))
         return render_template('user/change_pw.html', form_pw=form)
 
-
 @bp_user.route('/home/<string:user_id>', methods=['GET', 'POST'])
 @login_required
+@just_current_user
 def home(user_id):
     user = User.find_by_id(user_id)
 
@@ -70,9 +72,9 @@ def home(user_id):
 
     return render_template('user/home.html', user_id=user._id, name=user.name)
 
-
 @bp_user.route('/change_password/<string:user_id>', methods=['GET', 'POST'])
 @login_required
+@just_current_user
 def change_password(user_id):
     user = User.find_by_id(user_id)
     form = ChangePasswordForm()
@@ -100,6 +102,7 @@ def change_password(user_id):
 
 @bp_user.route('/uplines/<string:user_id>')
 @login_required
+@just_current_user
 def view_uplines(user_id):
     user = User.find_by_id(user_id)
     up = user.find_uplines(user_id)
@@ -112,6 +115,7 @@ def view_uplines(user_id):
 
 @bp_user.route('/subsets/<string:user_id>')
 @login_required
+@just_current_user
 def view_subsets(user_id):
     user = User.find_by_id(user_id)
     sub = User.find_sub(user_id)
@@ -151,6 +155,7 @@ def search(word):
 
 @bp_user.route('/profile/view/<string:user_id>')
 @login_required
+@just_current_user
 def view_profile(user_id):
     user = User.find_by_id(user_id)
     if not User.check_follow_relation(current_user._id, user_id):
@@ -162,6 +167,7 @@ def view_profile(user_id):
 
 @bp_user.route('/profile/edit/<string:user_id>')
 @login_required
+@just_current_user
 def edit_profile(user_id):
     # TODO Make edit page
     user = User.find_by_id(user_id)
@@ -177,9 +183,23 @@ def find_user_by_email_and_redirect(user_email):
 
 @bp_user.route('/follow/<string:user_id>')
 @login_required
+@just_current_user
 def follow(user_id):
     if not User.check_follow_relation(current_user._id, user_id):
         User.follow_user(current_user._id, user_id)
     elif User.check_follow_relation(current_user._id, user_id):
         User.un_follow_user(current_user._id, user_id)
     return redirect(url_for('users.view_profile', user_id=user_id))
+
+
+@bp_user.route('/home1/<string:user_id>')
+@login_required
+@just_current_user
+def follow1(user_id):
+    return str(request.referrer)
+
+@bp_user.route('/home2/<string:user_id>')
+@login_required
+@just_current_user
+def follow2(user_id):
+    return redirect(url_for('users.follow1',user_id=user_id))
