@@ -129,7 +129,6 @@ def admin_posts(admin_id):
         if request.form["search"]:
             word = request.form["search"].strip()
             option = request.form["radio"]
-            # print(word)
 
             if option == 'author':
                 user = User.find_by_email(word)

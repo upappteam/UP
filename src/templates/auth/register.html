@@ -8,7 +8,7 @@
 
 {% block aside %}
 <aside>
-	<form method='POST'>
+	<form method='POST' action="">
 		<!--error handled for Data Required-->
 			
 		<h4>{{ form.phone_number.label  }}</h4>
@@ -43,6 +43,13 @@
         {% endif %}
 		<p style="color: #0f0f0f">{{ form.password_c}}</p>
 		<hr>
+        <h4>{{ form.work_alone.label  }}<p style="color: #0f0f0f">{{ form.work_alone}}</p></h4>
+        {% if form.work_alone.errors %}
+            {% for error in form.work_alone.errors %}
+                <p>{{ error }}</p>
+            {% endfor %}
+        {% endif %}
+        <hr>
 		<button type="submit" class="btn btn-default">Register</button>
 
 	</form>

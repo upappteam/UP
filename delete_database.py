@@ -1,5 +1,5 @@
 from py2neo import Graph
-from
+
 
 graph = Graph()
 if __name__ == '__main__':

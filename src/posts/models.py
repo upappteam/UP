@@ -145,7 +145,6 @@ class Post(object):
     def delete_message_inbox(_id, user):
         post = Post.find_one(_id)
         rel = graph.match_one(post, "MESSAGE", user)
-        # print(rel)
 
         graph.separate(rel)
 
@@ -153,7 +152,6 @@ class Post(object):
     def delete_message_outbox(_id, user):
         post = Post.find_one(_id)
         rel = graph.match_one(user, "PUBLISHED", post)
-        # print(rel)
 
         graph.separate(rel)
 

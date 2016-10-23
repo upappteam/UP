@@ -11,8 +11,8 @@ class RegisterForm(Form):
                              validators=[validators.DataRequired('Please enter your password.')])
     password_c = PasswordField(label='Confirm Password',
                                validators=[validators.DataRequired('Please enter your password again.')])
-    remember_me = fields.BooleanField(label='Remember me',
-                                      validators=[validators.optional()])
+    work_alone = fields.BooleanField(label='Work alone',
+                                     validators=[validators.optional()])
 
     # submit = SubmitField(label='Register',
     #                      validators=[validators.DataRequired()])

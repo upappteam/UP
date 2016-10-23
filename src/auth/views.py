@@ -54,20 +54,21 @@ def login():
 
 @bp_auth.route('/register', methods=['GET', 'POST'])
 def register():
-    if current_user.is_authenticated == True:
+    if current_user.is_authenticated is True:
         flash('You are registerd before!')
-        return redirect(url_for('users.home',user_id=current_user._id))
+        return redirect(url_for('users.home', user_id=current_user._id))
 
     form = RegisterForm()
     if request.method == 'POST':
         phone_number = form.phone_number.data
-        upline_phone_number = form.upline_phone_number.data
+        upline_phone_number = 'None' if form.work_alone.data is True else form.upline_phone_number.data
         password = form.password.data
         password_c = form.password_c.data
 
-
         if not User.valid_phone_number(phone_number):
-            if form.work_alone.data == False:
+
+            if form.work_alone.data is False:
+
                 if User.valid_phone_number(upline_phone_number) and password == password_c:
                     new_user = User(phone_number=phone_number,
                                     upline_phone_number=upline_phone_number,
@@ -77,14 +78,16 @@ def register():
                     new_user.connect_to_upline()
 
                     return redirect(url_for('users.info', user_id=new_user._id))
-            elif form.work_alone.data ==True:
-                new_user = User(phone_number=phone_number,
-                                upline_phone_number=upline_phone_number,
-                                password=Utils.set_password(password))
-                new_user.register()
-                login_user(new_user)
 
-                return redirect(url_for('users.info', user_id=new_user._id))
+            elif form.work_alone.data is True and upline_phone_number is 'None':
+                if password == password_c:
+                    new_user = User(phone_number=phone_number,
+                                    upline_phone_number=upline_phone_number,
+                                    password=Utils.set_password(password))
+                    new_user.register()
+                    login_user(new_user)
+
+                    return redirect(url_for('users.info', user_id=new_user._id))
 
         else:
             flash("User exists with this phone number.")
@@ -92,9 +95,30 @@ def register():
 
     return render_template('auth/register.html', form=form)
 
+
 @bp_auth.route('/logout')
 @login_required
 def logout():
     logout_user()
     flash("You have been log out.")
     return redirect(url_for('index'))
+
+
+
+# { % if form.work_alone.data == False %}
+#
+# { % else %}
+# < !--
+# < h4 > {{form.upline_phone_number.label}} < / h4 >
+# { % if form.upline_phone_number.errors %}
+# { %
+# for error in form.upline_phone_number.errors %}
+# < p > {{error}} < / p >
+#
+#
+# { % endfor %}
+# { % endif %}
+# < p
+# style = "color: #0f0f0f" > {{form.upline_phone_number}} < / p >
+# -->
+# { % endif %}

@@ -8,6 +8,7 @@ from flask_login import login_required,current_user
 def home():
     return 'here is home'
 
+
 @bp_common.route('/login/')
 def login():
     return redirect(url_for('auth.login'))
