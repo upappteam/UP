@@ -44,7 +44,7 @@
                            <p>{% if form.name.data is not none %}{{ form.name.data }}{% endif %}</p>
                             <p>{{ form.name.label }}</p>
                             <p>{{ form.name }}</p>
-                     </div>
+                        </div>
                     </li>
                     <li>
                         <div>
@@ -76,7 +76,7 @@
                         <div>
                             <p>{% if form.birthday_day.data %}{{ form.birthday_day.data }}{% endif %}</p>
                             <p>{{ form.birthday_day.label }}</p>
-                            <p>{{ form.birthday_day }}</p>
+                            <p>{{ form.birthday_day(onclick="PersianDatePicker.Show(this, '1370/03/22')") }}</p>
                         </div>
                     </li>
 

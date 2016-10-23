@@ -102,23 +102,3 @@ def logout():
     logout_user()
     flash("You have been log out.")
     return redirect(url_for('index'))
-
-
-
-# { % if form.work_alone.data == False %}
-#
-# { % else %}
-# < !--
-# < h4 > {{form.upline_phone_number.label}} < / h4 >
-# { % if form.upline_phone_number.errors %}
-# { %
-# for error in form.upline_phone_number.errors %}
-# < p > {{error}} < / p >
-#
-#
-# { % endfor %}
-# { % endif %}
-# < p
-# style = "color: #0f0f0f" > {{form.upline_phone_number}} < / p >
-# -->
-# { % endif %}

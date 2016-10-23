@@ -9,6 +9,7 @@ from src.users.forms import ProfileForm, ChangePasswordForm
 
 from src.common.models import just_current_user
 
+
 @bp_user.route('/info/<string:user_id>', methods=['GET', 'POST'])
 @login_required
 @just_current_user
@@ -24,11 +25,16 @@ def info(user_id):
             gender = form.gender.data
             company = form.company.data
             birthday = form.birthday_day.data
+            brtd = birthday.split('/')
+            if len(brtd) is not 3:
+                flash("Make sure Date Time is in correct format:\nYYYY/MM/DD")
+                return redirect(url_for(url_for('users.info', user_id=current_user._id)))
 
             if User.find_by_email(email):
                 flash("This someone email address registered.")
                 return redirect(url_for('users.info', user_id=current_user._id))
 
+            birthday = "-".join(brtd)
             login_user(user)
             user.profile(name, family, gender, company, email, birthday)
 
@@ -39,26 +45,28 @@ def info(user_id):
 
         return render_template('user/profile.html', form=form)
 
-    else:
-        form = ChangePasswordForm()
+    return redirect(url_for('users.view_profile', user_id=user_id))
+    # else:
+    #     form = ChangePasswordForm()
+    #
+    #     if request.method == 'POST':
+    #         current_password = form.current_password
+    #         new_password = form.new_password.data
+    #         confirm_password = form.confirm_password.data
+    #
+    #         if Utils.check_password(user.password, current_password):
+    #             if new_password == confirm_password:
+    #                 user.change_password(new_password)
+    #                 flash("Your password changed.")
+    #                 return redirect(url_for('users.home', user_id=user._id))
+    #             else:
+    #                 flash("The confirm password not matched.")
+    #                 return redirect(url_for('users.info', user_id=user._id))
+    #         else:
+    #             flash("Your current password is wrong.")
+    #             return redirect(url_for('users.info', user_id=user._id))
+    #     return render_template('user/change_pw.html', form_pw=form)
 
-        if request.method == 'POST':
-            current_password = form.current_password
-            new_password = form.new_password.data
-            confirm_password = form.confirm_password.data
-
-            if Utils.check_password(user.password, current_password):
-                if new_password == confirm_password:
-                    user.change_password(new_password)
-                    flash("Your password changed.")
-                    return redirect(url_for('users.home', user_id=user._id))
-                else:
-                    flash("The confirm password not matched.")
-                    return redirect(url_for('users.info', user_id=user._id))
-            else:
-                flash("Your current password is wrong.")
-                return redirect(url_for('users.info', user_id=user._id))
-        return render_template('user/change_pw.html', form_pw=form)
 
 @bp_user.route('/home/<string:user_id>', methods=['GET', 'POST'])
 @login_required
@@ -71,6 +79,7 @@ def home(user_id):
         return redirect(url_for('users.search', word=word))
 
     return render_template('user/home.html', user_id=user._id, name=user.name)
+
 
 @bp_user.route('/change_password/<string:user_id>', methods=['GET', 'POST'])
 @login_required
@@ -129,7 +138,6 @@ def view_subsets(user_id):
 @login_required
 def search(word):
     word_ = word.strip()
-    # print(word)
     if "@" in word_:
         flash("Can not find any user by email address.")
         return redirect(url_for('users.home', user_id=current_user._id))
