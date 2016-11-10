@@ -16,6 +16,7 @@
         <div class="container">
             <h2><label class="label label-success">Send message to users or one user.</label></h2>
             <form action="" method="post" class="form-group">
+                {{ form.hidden_tag() }}
                 <div class="container">
                     <h3><label class="label label-info" for="search">Enter a user email to send message or select send to all to send message to all users.</label></h3>
                     <div class="radio">

@@ -93,6 +93,11 @@
             <a href="{{ url_for('users.view_profile', user_id=user_id) }}"><button class="btn btn-success">Personal info</button></a>
             <br>
         </div>
+        <div class="container">
+            <br>
+            <a href="{{ url_for('users.feedback', user_id=user_id) }}"><button class="btn btn-success">FeedBack</button></a>
+            <br>
+        </div>
     </article>
 {% endblock %}
 

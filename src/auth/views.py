@@ -13,14 +13,14 @@ def login():
     if current_user.is_authenticated == True:
         return redirect(url_for('users.home',user_id=current_user._id))
     form = LoginForm()
-    if request.method == 'POST' and form.validate_on_submit():
+    if form.validate_on_submit():
         phone_number = form.phone_number.data
         password = form.password.data
         remember_me = form.remember_me.data
 
         if '@' in phone_number and phone_number == Admin.find_admin_email(phone_number)["email"]:
             admin = Admin.classify(Admin.find_admin_email(phone_number))
-
+            # TODO Fix checking the password with a method not this
             if password == admin.password:
                 session["email"] = admin.email
                 return redirect(url_for('admins.admin_home', admin_id=admin._id))
@@ -54,12 +54,14 @@ def login():
 
 @bp_auth.route('/register', methods=['GET', 'POST'])
 def register():
+    flash_category = ''
+
     if current_user.is_authenticated is True:
         flash('You are registerd before!')
         return redirect(url_for('users.home', user_id=current_user._id))
 
     form = RegisterForm()
-    if request.method == 'POST':
+    if form.validate_on_submit():
         phone_number = form.phone_number.data
         upline_phone_number = 'None' if form.work_alone.data is True else form.upline_phone_number.data
         password = form.password.data
@@ -78,6 +80,10 @@ def register():
                     new_user.connect_to_upline()
 
                     return redirect(url_for('users.info', user_id=new_user._id))
+
+                else:
+                    flash("Check the fields upline phone number or password confirm not matched.")
+                    return redirect(url_for('auth.register'))
 
             elif form.work_alone.data is True and upline_phone_number is 'None':
                 if password == password_c:
@@ -100,5 +106,5 @@ def register():
 @login_required
 def logout():
     logout_user()
-    flash("You have been log out.")
+    flash("You have been log out.", "alert-info")
     return redirect(url_for('index'))

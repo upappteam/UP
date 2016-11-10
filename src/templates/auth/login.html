@@ -22,7 +22,7 @@
     <aside>
         <h2>Log in</h2>
         <form method="POST" action="">
-            {{ form.csrf_token }}
+            {{ form.hidden_tag() }}
             <div class="form-group">
                 <h4>{{ form.phone_number.label  }}</h4>
                     {% if form.phone_number.errors %}

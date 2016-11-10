@@ -1,6 +1,7 @@
 import os
 
 
+# TODO Fix Database configurations in config.py file
 class Config:
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'strong key'
 

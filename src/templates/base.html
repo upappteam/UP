@@ -28,7 +28,7 @@
 
     </head>
     <body>
-        
+
         {% block header %}
             <div class="header-container">
                 <header class="wrapper clearfix">
@@ -41,20 +41,21 @@
                     </nav>
                 </header>
             </div>
-            <div class="flash">
-                <div>
-                    {% with messages = get_flashed_messages() %}
-                        {% if messages %}
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                    <div class="alert alert-danger" role="alert">
+                        <div>
                             <ul class=flashes>
                                 {% for message in messages %}
                                     <li>{{ message }}</li>
                                 {% endfor %}
                             </ul>
-                        {% endif %}
-                    {% endwith %}
-                </div>
-            </div>
+                        </div>
+                    </div>
+                {% endif %}
+            {% endwith %}
         {% endblock %}
+
         <div class="main-container">
             <div class="main wrapper clearfix">
                 {% block article %}
@@ -100,7 +101,7 @@
         <script src="{{ url_for('static', filename='js/plugins.js') }}"></script>
         <script src="{{ url_for('static', filename='js/main.js') }}"></script>
 
-        <!-- Google Analytics: change UA-XXXXX-X to be your site's ID. 
+        <!-- Google Analytics: change UA-XXXXX-X to be your site's ID.
         <script>
             (function(b,o,i,l,e,r){b.GoogleAnalyticsObject=l;b[l]||(b[l]=
             function(){(b[l].q=b[l].q||[]).push(arguments)});b[l].l=+new Date;

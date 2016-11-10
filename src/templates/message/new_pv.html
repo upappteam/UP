@@ -11,7 +11,7 @@
         </header>
         <div class="container">
             <form method="POST" action="">
-                {{ form.csrf_token }}
+                {{ form.hidden_tag() }}
                 <div>
                     <p>{{ form.to.label }}</p>
                 </div>

@@ -206,8 +206,16 @@ def follow(user_id):
 def follow1(user_id):
     return str(request.referrer)
 
+
 @bp_user.route('/home2/<string:user_id>')
 @login_required
 @just_current_user
 def follow2(user_id):
     return redirect(url_for('users.follow1',user_id=user_id))
+
+
+@bp_user.route('/feedback/<string:user_id>')
+@login_required
+@just_current_user
+def feedback(user_id):
+    return render_template("post/feedback.html", user_id=user_id)

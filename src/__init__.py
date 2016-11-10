@@ -2,11 +2,6 @@ from flask import Flask
 from flask_login import LoginManager
 
 from config import config
-from src.auth import bp_auth
-from src.users import bp_user
-from src.posts import bp_post
-from src.admin import bp_admin
-from src.messages import bp_message
 
 
 login_manager = LoginManager()
@@ -21,10 +16,19 @@ def create_app(config_name):
 
     login_manager.init_app(app)
 
+    from src.auth import bp_auth
     app.register_blueprint(bp_auth, url_prefix='/auth')
+
+    from src.users import bp_user
     app.register_blueprint(bp_user, url_prefix='/users')
+
+    from src.posts import bp_post
     app.register_blueprint(bp_post, url_prefix='/posts')
+
+    from src.admin import bp_admin
     app.register_blueprint(bp_admin, url_prefix='/admin')
+
+    from src.messages import bp_message
     app.register_blueprint(bp_message, url_prefix='/messages')
 
     return app
