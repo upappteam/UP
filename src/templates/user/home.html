@@ -7,7 +7,8 @@
 {% block header %}
     <div class="header-container">
         <header class="wrapper clearfix">
-            {% if user_id %}<a href="{{ url_for('users.home', user_id=user_id) }}"><h1 class="title">Network Marketing</h1></a>
+            <!-- TODO make this part work (WITHOUT SENDING USER_ID) -->
+            {% if user_id %}<a href="{{ url_for('users.home') }}"><h1 class="title">Network Marketing</h1></a>
             {% else %}<a href="{{ url_for('index') }}"><h1 class="title">Network Marketing</h1></a>
             {% endif %}
             <nav>
@@ -45,27 +46,27 @@
         </div>
         <div class="container">
             <br>
-            <a href="{{ url_for('users.change_password', user_id=user_id) }}"><button class="btn btn-success">Change password</button></a>
+            <a href="{{ url_for('users.change_password') }}"><button class="btn btn-success">Change password</button></a>
             <br>
         </div>
         <div class="container">
             <br>
-            <a href="{{ url_for('posts.view_sent_posts', user_id=user_id) }}"><button class="btn btn-success">View sent posts</button></a>
+            <a href="{{ url_for('posts.view_sent_posts') }}"><button class="btn btn-success">View sent posts</button></a>
             <br>
         </div>
         <div class="container">
             <br>
-            <a href="{{ url_for('posts.new_post', user_id=user_id) }}"><button class="btn btn-success">New post</button></a>
+            <a href="{{ url_for('posts.new_post') }}"><button class="btn btn-success">New post</button></a>
             <br>
         </div>
         <div class="container">
             <br>
-            <a href="{{ url_for('messages.inbox', user_id=user_id) }}"><button class="btn btn-success">Inbox</button></a>
+            <a href="{{ url_for('messages.inbox') }}"><button class="btn btn-success">Inbox</button></a>
             <br>
         </div>
         <div class="container">
             <br>
-            <a href="{{ url_for('messages.outbox', user_id=user_id) }}"><button class="btn btn-success">Outbox</button></a>
+            <a href="{{ url_for('messages.outbox') }}"><button class="btn btn-success">Outbox</button></a>
             <br>
         </div>
         <div class="container">
@@ -75,27 +76,27 @@
         </div>
         <div class="container">
             <br>
-            <a href="{{ url_for('posts.posts_from_subsets', user_id=user_id) }}"><button class="btn btn-success">Posts from subsets</button></a>
+            <a href="{{ url_for('posts.posts_from_subsets') }}"><button class="btn btn-success">Posts from subsets</button></a>
             <br>
         </div>
         <div class="container">
             <br>
-            <a href="{{ url_for('posts.posts_from_uplines', user_id=user_id) }}"><button class="btn btn-success">Posts from uplines</button></a>
+            <a href="{{ url_for('posts.posts_from_uplines') }}"><button class="btn btn-success">Posts from uplines</button></a>
             <br>
         </div>
         <div class="container">
             <br>
-            <a href="{{ url_for('posts.posts_for_directs', user_id=user_id) }}"><button class="btn btn-success">Posts for directs</button></a>
+            <a href="{{ url_for('posts.posts_for_directs') }}"><button class="btn btn-success">Posts for directs</button></a>
             <br>
         </div>
         <div class="container">
             <br>
-            <a href="{{ url_for('users.view_profile', user_id=user_id) }}"><button class="btn btn-success">Personal info</button></a>
+            <a href="{{ url_for('users.view_profile') }}"><button class="btn btn-success">Personal info</button></a>
             <br>
         </div>
         <div class="container">
             <br>
-            <a href="{{ url_for('users.feedback', user_id=user_id) }}"><button class="btn btn-success">FeedBack</button></a>
+            <a href="{{ url_for('users.feedback') }}"><button class="btn btn-success">FeedBack</button></a>
             <br>
         </div>
     </article>
@@ -104,10 +105,10 @@
 {% block aside %}
     <aside>
         <br>
-        <a href="{{ url_for('users.view_uplines', user_id=user_id) }}"><button class="btn btn-default">Uplines</button></a>
+        <a href="{{ url_for('users.view_uplines') }}"><button class="btn btn-default">Uplines</button></a>
         <br>
         <br>
-        <a href="{{ url_for('users.view_subsets', user_id=user_id) }}"><button class="btn btn-default">Subsets</button></a>
+        <a href="{{ url_for('users.view_subsets') }}"><button class="btn btn-default">Subsets</button></a>
     </aside>
 {% endblock %}
 

@@ -1,5 +1,5 @@
-from flask_login import login_required, login_user, logout_user,current_user
-from flask import request, redirect, url_for, flash, render_template, session
+from flask_login import login_required, login_user, logout_user, current_user
+from flask import redirect, url_for, flash, render_template, session, g, current_app, appcontext_pushed
 
 from . import bp_auth
 from src.admin.models import Admin
@@ -11,7 +11,7 @@ from src.auth.forms import RegisterForm, LoginForm
 @bp_auth.route('/login', methods=['GET', 'POST'])
 def login():
     if current_user.is_authenticated == True:
-        return redirect(url_for('users.home',user_id=current_user._id))
+        return redirect(url_for('users.home', user_id=current_user._id))
     form = LoginForm()
     if form.validate_on_submit():
         phone_number = form.phone_number.data
@@ -19,14 +19,23 @@ def login():
         remember_me = form.remember_me.data
 
         if '@' in phone_number and phone_number == Admin.find_admin_email(phone_number)["email"]:
-            admin = Admin.classify(Admin.find_admin_email(phone_number))
-            # TODO Fix checking the password with a method not this
-            if password == admin.password:
-                session["email"] = admin.email
-                return redirect(url_for('admins.admin_home', admin_id=admin._id))
+            admin_data = Admin.find_admin_email(phone_number)
+            if admin_data:
+                admin = Admin.classify(name=admin_data["name"],
+                                       family=admin_data["family"],
+                                       email=admin_data["email"],
+                                       password=admin_data["password"],
+                                       permission=admin_data["permission"],
+                                       _id=admin_data["_id"])
+                if admin.check_pw(password):
+                    session["email"] = admin.email
+                    login_user(user=admin, remember=remember_me)
+
+                    return redirect(url_for('admins.admin_home'))
 
         user_data = User.find_one(phone_number)
         if not user_data:
+            flash('User does not exists.')
             return redirect(url_for('auth.register'))
         user = User.classify1(user_data)
         # check user account time
@@ -54,7 +63,6 @@ def login():
 
 @bp_auth.route('/register', methods=['GET', 'POST'])
 def register():
-    flash_category = ''
 
     if current_user.is_authenticated is True:
         flash('You are registerd before!')
@@ -62,6 +70,7 @@ def register():
 
     form = RegisterForm()
     if form.validate_on_submit():
+
         phone_number = form.phone_number.data
         upline_phone_number = 'None' if form.work_alone.data is True else form.upline_phone_number.data
         password = form.password.data

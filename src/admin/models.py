@@ -2,21 +2,27 @@ import uuid
 from py2neo import Graph, Node
 from flask_login import UserMixin
 
+import config
+from src.admin.utils import Utils
 from src.posts.models import Post
 from src.users.models import User
 
 
-graph = Graph()
+graph = Graph(config.Develop.URI)
 
 
-class Admin(UserMixin, object):
+class Admin(UserMixin):
 
-    def __init__(self, name, family, email, password, _id=None):
+    def __init__(self, name, family, email, password, permission, _id=None):
         self.name = name
         self.family = family
         self.email = email
         self.password = password
+        self.permission = permission
         self._id = uuid.uuid4().hex if _id is None else _id
+
+    def check_pw(self, password):
+        return Utils.check_password(self.password, password)
 
     def init_neo4j(self):
         admin = graph.find_one('Admin', property_key='email', property_value=self.email)
@@ -28,16 +34,18 @@ class Admin(UserMixin, object):
                          family=self.family,
                          email=self.email,
                          password=self.password,
+                         permission=self.permission,
                          _id=self._id)
 
             graph.create(admin)
 
     @classmethod
-    def classify(cls, admin_data):
+    def classify(cls, **admin_data):
         return cls(name=admin_data["name"],
                    family=admin_data["family"],
                    email=admin_data["email"],
                    password=admin_data["password"],
+                   permission=admin_data["permission"],
                    _id=admin_data["_id"])
 
     @staticmethod
@@ -54,18 +62,6 @@ class Admin(UserMixin, object):
 
     def get_id(self):
         return self._id
-
-    @property
-    def is_anonymous(self):
-        return False
-
-    @property
-    def is_authenticated(self):
-        return True
-
-    @property
-    def is_active(self):
-        return True
 
     @staticmethod
     def find_all_public_posts():

@@ -6,11 +6,17 @@
 {% block article %}
     <article>
         <ul class="nav nav-tabs">
-            <li role="presentation"><a href="{{ url_for('admins.admin_home', admin_id=admin_id) }}">Home</a></li>
-            <li role="presentation" class="active"><a href="{{ url_for('admins.admin_users', admin_id=admin_id) }}">Users</a></li>
-            <li role="presentation"><a href="{{ url_for('admins.admin_posts', admin_id=admin_id) }}">Posts</a></li>
-            <li role="presentation"><a href="{{ url_for('admins.admin_send_message', admin_id=admin_id) }}">Send message</a></li>
-            <li role="presentation"><a href="{{ url_for('admins.admin_read_message', admin_id=admin_id) }}">Read message</a></li>
+            <li role="presentation"><a href="{{ url_for('admins.admin_home') }}">Home</a></li>
+            <li role="presentation" class="active"><a href="{{ url_for('admins.admin_users') }}">Users</a></li>
+            <li role="presentation"><a href="{{ url_for('admins.admin_posts') }}">Posts</a></li>
+            <li role="presentation"><a href="{{ url_for('admins.admin_send_message') }}">Send message</a></li>
+            <li role="presentation"><a href="{{ url_for('admins.admin_read_message') }}">Read message</a></li>
+        </ul>
+        <br>
+        <br>
+        <ul class="nav nav-pills nav-stacked">
+            <li role="presentation" class={{ activate }}><a href="{{ url_for('admins.admin_users') }}">Find one user</a></li>
+            <li role="presentation" class={{ activate }}><a href="{{ url_for('admins.show_all_users') }}">Show all users</a></li>
         </ul>
         {% if search %}
             <form action="" method="post">
@@ -34,22 +40,35 @@
         {% endif %}
         {% if users %}
             {% if users|length > 1 %}
-                <div class="container">
-                    <h3><strong>User info:</strong></h3><strong></strong>
-                    {% for user in users %}
-                        <p><strong>Name:</strong> {{ user.name }}</p>
-                        <p><strong>Family:</strong> {{ user.family }}</p>
-                        <p><strong>Phone number:</strong> {{ user.phone_number }}</p>
-                        <p><strong>Upline phone number:</strong> {{ user.upline_phone_number }}</p>
-                        <p><strong>Company:</strong> {{ user.company }}</p>
-                        <p><strong>Email:</strong> {{ user.email }}</p>
-                        <p><strong>Gender:</strong> {{ user.gender }}</p>
-                        <p><strong>Register date:</strong> {{ user.register_date }}</p>
-                        <p><strong>Birthday:</strong> {{ user.birthday }}</p>
-                        <p><strong>User ID:</strong> {{ user._id }}</p>
-                        <hr>
-                    {% endfor %}
-                </div>
+                    <br>
+                    <br>
+                    <br>
+                    <h3><strong>Users info:</strong></h3>
+                    <table class="table table-striped table-condensed">
+                        <thead>
+                            <tr>
+                                <th><strong>Phone Number</strong></th>
+                                <th><strong>Full Name</strong></th>
+                                <th><strong>Company</strong></th>
+                                <th><strong>Birthday</strong></th>
+                                <th><strong>Email</strong></th>
+                                <th><strong>Confirm</strong></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for user in users %}
+                                <tr>
+                                    <td><a href="{{ url_for('users.view_profile', user_id=user._id) }}">{{ user.phone_number }}</a></td>
+                                    <td>{{ user.name }} {{ user.family }}</td>
+                                    <td>{{ user.company }}</td>
+                                    <td>{{ user.birthday }}</td>
+                                    <td>{{ user.email }}</td>
+                                    <td class="warning">NO</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+
             {% elif users|length == 1 %}
                 <div class="container">
                     <h3><strong>User info:</strong></h3>
@@ -75,12 +94,3 @@
     </article>
 {% endblock %}
 
-{% block aside %}
-    <aside>
-        <br>
-        <ul class="nav nav-pills nav-stacked">
-            <li role="presentation" class={{ activate }}><a href="{{ url_for('admins.admin_users', admin_id=admin_id) }}">Find one user</a></li>
-            <li role="presentation" class={{ activate }}><a href="{{ url_for('admins.show_all_users', admin_id=admin_id) }}">Show all users</a></li>
-        </ul>
-    </aside>
-{% endblock %}

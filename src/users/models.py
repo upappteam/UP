@@ -1,14 +1,14 @@
-
 import uuid
 import khayyam3
 from flask_login import UserMixin
 from py2neo import Graph, Node, Relationship
 
+import config
 from src.users.constants import USER
 from src.users.utils import Utils
 
 
-graph = Graph()
+graph = Graph(config.Develop.URI)
 
 
 class User(UserMixin, object):
