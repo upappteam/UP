@@ -75,11 +75,10 @@ def replay(author):
     return render_template("message/new_pv.html", form=form)
 
 
-@bp_message.route('/inbox/<string:user_id>')
+@bp_message.route('/inbox')
 @login_required
-def inbox(user_id):
-    user = User.find_by_id(user_id)
-    posts = Post.find_message(user.email)
+def inbox():
+    posts = Post.find_message(current_user.email)
 
     return render_template("message/inbox.html", posts=posts)
 
@@ -90,7 +89,7 @@ def delete_message_inbox(post_id):
     user = User.find_by_email(current_user.email)
     if Post.delete_message_inbox(post_id, user):
         flash("Message deleted.")
-    return redirect(url_for('messages.inbox', user_id=user["_id"]))
+    return redirect(url_for('messages.inbox'))
 
 
 @bp_message.route('/outbox/delete/<string:post_id>')
@@ -99,16 +98,14 @@ def delete_message_outbox(post_id):
     user = User.find_by_email(current_user.email)
     if Post.delete_message_inbox(post_id, user):
         flash("Message deleted.")
-    return redirect(url_for('messages.outbox', user_id=user["_id"]))
+    return redirect(url_for('messages.outbox'))
 
 
-@bp_message.route('/outbox/<string:user_id>')
-def outbox(user_id):
-    user_data = User.find_by_id(user_id)
-    posts = Post.find_all_type(user_data.email, 'private')
+@bp_message.route('/outbox')
+def outbox():
+    posts = Post.find_all_type(current_user.email, 'private')
     if posts:
         posts_length = len(posts)
     else:
         posts_length = 0
-    return render_template('message/outbox.html', posts=posts,
-                           user_id=user_data._id, posts_length=posts_length)
+    return render_template('message/outbox.html', posts=posts, posts_length=posts_length)

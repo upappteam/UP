@@ -7,7 +7,7 @@
 {% block header %}
     <div class="header-container">
         <header class="wrapper clearfix">
-            {% if user_id %}<a href="{{ url_for('users.home', user_id=user_id) }}"><h1 class="title">Network Marketing</h1></a>
+            {% if user_id %}<a href="{{ url_for('users.home') }}"><h1 class="title">Network Marketing</h1></a>
             {% else %}<a href="{{ url_for('index') }}"><h1 class="title">Network Marketing</h1></a>
             {% endif %}
             <nav>

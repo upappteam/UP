@@ -12,28 +12,26 @@ from src.posts.forms import PostForm, EditForm
 # TODO Comment in every posts
 # TODO List of subsets
 
-@bp_post.route('/sent/<string:user_id>')
+@bp_post.route('/sent')
 @login_required
-def view_sent_posts(user_id):
+def view_sent_posts():
     """
     View all posts sent by this user.
     Of course not messages.
     :param user_id: _id of user to find the user.
     :return: A page with all posts sent by this user.
     """
-    user_data = User.find_by_id(user_id)
-    posts = Post.find_all_by_email(user_data.email)
+    posts = Post.find_all_by_email(current_user.email)
     if posts:
         posts_length = len(posts)
     else:
         posts_length = 0
-    return render_template('post/view_posts.html', posts=posts,
-                           user_id=user_data._id, posts_length=posts_length)
+    return render_template('post/view_posts.html', posts=posts, posts_length=posts_length)
 
 
-@bp_post.route('/new/<string:user_id>', methods=['GET', 'POST'])
+@bp_post.route('/new', methods=['GET', 'POST'])
 @login_required
-def new_post(user_id):
+def new_post():
     """
     Write a new post with type publications :
     1.public
@@ -54,8 +52,7 @@ def new_post(user_id):
             Post(user_data["email"], subject, content, type_publication=type_publication).insert(_type=type_publication)
 
         elif type_publication == 'uplines':
-            user = User.find_by_id(user_id)
-            uplines = user.find_uplines(user_id)
+            uplines = current_user.find_uplines(current_user._id)
             if uplines:
                 post = Post(user_data["email"], subject, content,type_publication=type_publication)
                 post.insert(type_publication)
@@ -63,10 +60,10 @@ def new_post(user_id):
                     Post.connect(up.email, post._id, type_publication)
             else:
                 flash("You have not any uplines.")
-                return redirect(url_for('posts.new_post', user_id=user_id))
+                return redirect(url_for('posts.new_post'))
 
         elif type_publication == 'subsets':
-            subsets = User.find_sub(user_id)
+            subsets = User.find_sub(current_user._id)
             if subsets:
                 post = Post(user_data["email"], subject, content, type_publication=type_publication)
                 post.insert(type_publication)
@@ -74,7 +71,7 @@ def new_post(user_id):
                     Post.connect(sub.email, post._id, type_publication)
             else:
                 flash("You have not any subsets.")
-                return redirect(url_for('posts.new_post', user_id=user_id))
+                return redirect(url_for('posts.new_post'))
 
         elif type_publication == 'directs':
             directs = User.find_directs(current_user.email)
@@ -85,11 +82,10 @@ def new_post(user_id):
                     Post.connect(direct.email, post._id, type_publication)
             else:
                 flash("You have not any directs.")
-                return redirect(url_for('posts.new_post', user_id=user_id))
+                return redirect(url_for('posts.new_post'))
 
         elif type_publication == 'upline':
-            user = User.find_by_id(user_id)
-            upline = User.find_one(user.upline_phone_number)
+            upline = User.find_one(current_user.upline_phone_number)
             if upline:
                 post = Post(user_data["email"], subject, content, type_publication=type_publication)
                 post.insert(type_publication)
@@ -97,11 +93,11 @@ def new_post(user_id):
 
             else:
                 flash("You have not any upline.")
-                return redirect(url_for('posts.new_post', user_id=user_id))
+                return redirect(url_for('posts.new_post'))
 
-        return redirect(url_for('posts.view_sent_posts', user_id=current_user._id))
+        return redirect(url_for('posts.view_sent_posts'))
 
-    return render_template("post/new_post.html", form=form, user_id=current_user._id)
+    return render_template("post/new_post.html", form=form)
 
 
 @bp_post.route('/edit/<string:post_id>', methods=['GET', 'POST'])
@@ -116,14 +112,13 @@ def edit_post(post_id):
     post = Post.find_one(post_id)
 
     if request.method == 'POST':
-        user = User.find_by_email(current_user.email)
         subject = form.subject.data
         content = form.content.data
 
         if subject is not None and content is not None:
             Post.edit(post_id, subject, content)
             flash("Post edited.")
-            return redirect(url_for('posts.view_sent_posts', user_id=user["_id"], post=post))
+            return redirect(url_for('posts.view_sent_posts', post=post))
 
         flash("fields can not be empty.")
         return redirect(url_for('posts.edit_post', post_id=post_id))
@@ -144,7 +139,7 @@ def delete_post(post_id):
     user = User.find_by_email(current_user.email)
     Post.delete(post_id, user)
     flash("Post deleted.")
-    return redirect(url_for('posts.view_sent_posts', user_id=user["_id"]))
+    return redirect(url_for('posts.view_sent_posts'))
 
 
 @bp_post.route('/public')
@@ -161,33 +156,30 @@ def view_public_posts():
                            title='Public posts', msg=message, user_email=current_user.email)
 
 
-@bp_post.route('/from_subsets/<string:user_id>')
+@bp_post.route('/from_subsets')
 @login_required
-def posts_from_subsets(user_id):
-    user = User.find_by_id(user_id)
-    posts = Post.find_message_by_type(user.email, 'uplines')
+def posts_from_subsets():
+    posts = Post.find_message_by_type(current_user.email, 'uplines')
     message = "There is no posts from subsets."
     return render_template("post/public_posts.html",
                            posts=posts,
                            title='Posts from subsets', msg=message)
 
 
-@bp_post.route('/from_uplines/<string:user_id>')
+@bp_post.route('/from_uplines')
 @login_required
-def posts_from_uplines(user_id):
-    user = User.find_by_id(user_id)
-    posts = Post.find_message_by_type(user.email, 'subsets')
+def posts_from_uplines():
+    posts = Post.find_message_by_type(current_user.email, 'subsets')
     message = "There is no posts from uplines."
     return render_template("post/public_posts.html",
                            posts=posts,
                            title='Posts from uplines', msg=message)
 
 
-@bp_post.route('/for_directs/<string:user_id>')
+@bp_post.route('/for_directs')
 @login_required
-def posts_for_directs(user_id):
-    user = User.find_by_id(user_id)
-    posts = Post.find_message_by_type(user.email, 'directs')
+def posts_for_directs():
+    posts = Post.find_message_by_type(current_user.email, 'directs')
     message = "There is no posts for directs."
     return render_template("post/public_posts.html",
                            posts=posts,

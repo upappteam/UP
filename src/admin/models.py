@@ -3,7 +3,7 @@ from py2neo import Graph, Node
 from flask_login import UserMixin
 
 import config
-from src.admin.utils import Utils
+from src.utils.models import Utils
 from src.posts.models import Post
 from src.users.models import User
 

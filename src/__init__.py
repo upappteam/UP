@@ -2,7 +2,7 @@ from flask import Flask, render_template, redirect, url_for
 from flask_login import LoginManager
 
 from config import config
-from admin.utils import Utils
+from src.utils.models import Utils
 from src.users.models import User
 
 

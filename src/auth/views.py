@@ -1,11 +1,11 @@
+from flask import redirect, url_for, flash, render_template, session
 from flask_login import login_required, login_user, logout_user, current_user
-from flask import redirect, url_for, flash, render_template, session, g, current_app, appcontext_pushed
 
-from . import bp_auth
 from src.admin.models import Admin
-from src.users.models import User
-from src.users.utils import Utils
 from src.auth.forms import RegisterForm, LoginForm
+from src.users.models import User
+from src.utils.models import Utils
+from . import bp_auth
 
 
 @bp_auth.route('/login', methods=['GET', 'POST'])

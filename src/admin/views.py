@@ -2,7 +2,6 @@ from flask import render_template, flash, request, redirect, url_for, session, g
 from flask_login import current_user, logout_user
 
 from . import bp_admin
-# from src.common.models import permission_admins
 from src.users.models import User
 from src.posts.models import Post
 from src.admin.models import Admin

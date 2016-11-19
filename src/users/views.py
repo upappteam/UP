@@ -1,18 +1,16 @@
 # -*- coding: utf-8 -*-
 from flask import request, render_template, flash, redirect, url_for
-from flask_login import current_user, login_required, login_user
-
-from . import bp_user
-from src.users.models import User
-from src.users.utils import Utils
-from src.users.forms import ProfileForm, ChangePasswordForm
+from flask_login import current_user, login_required
 
 from src.common.models import just_current_user
+from src.users.forms import ProfileForm, ChangePasswordForm
+from src.users.models import User
+from src.utils.models import Utils
+from . import bp_user
 
 
 @bp_user.route('/info', methods=['GET', 'POST'])
 @login_required
-@just_current_user
 def info():
     if current_user.name == 'none':
         form = ProfileForm()
@@ -67,19 +65,17 @@ def info():
 
 @bp_user.route('/home', methods=['GET', 'POST'])
 @login_required
-@just_current_user
 def home():
     if request.method == 'POST' and request.form["search"]:
         word = request.form["search"]
         return redirect(url_for('users.search', word=word))
 
-    return render_template('user/home.html', name=current_user.name)
+    return render_template('user/home.html', current=current_user)
 
 
 # TODO Change password by TOKEN not this
 @bp_user.route('/change_password', methods=['GET', 'POST'])
 @login_required
-@just_current_user
 def change_password():
     form = ChangePasswordForm()
     if request.method == 'POST' and form.validate_on_submit():
@@ -107,7 +103,6 @@ def change_password():
 # TODO Make sure to work this route
 @bp_user.route('/uplines')
 @login_required
-@just_current_user
 def view_uplines():
     up = current_user.find_uplines(current_user._id)
     if isinstance(up, list) and len(up) > 0:
@@ -120,7 +115,6 @@ def view_uplines():
 # TODO Make sure to work this route
 @bp_user.route('/subsets')
 @login_required
-@just_current_user
 def view_subsets():
     sub = User.find_sub(current_user._id)
     if isinstance(sub, list) and len(sub) > 0:
@@ -135,48 +129,45 @@ def search(word):
     word_ = word.strip()
     if "@" in word_:
         flash("Can not find any user by email address.")
-        return redirect(url_for('users.home', user_id=current_user._id))
+        return redirect(url_for('users.home'))
     elif " " in word_:
         name_family = word_.split(" ")
         if len(name_family) == 2:
             name, family = name_family
             users = User.search_by_name_family(name=name, family=family)
-            return render_template("user/result.html", users=users, user_id=current_user._id)
+            return render_template("user/result.html", users=users)
         elif len(name_family) == 3:
             name, mid_name, family = name_family
             users1 = User.search_by_name_family(name=name+mid_name, family=family)
             users2 = User.search_by_name_family(name=name, family=mid_name+family)
             users = users1 + users2
-            return render_template("user/result.html", users=users, user_id=current_user._id)
+            return render_template("user/result.html", users=users)
     elif " " not in word_:
         users = User.search_by_name_family(name=word_, family=word_)
-        return render_template("user/result.html", users=users, user_id=current_user._id)
+        return render_template("user/result.html", users=users)
 
     flash("Could not find any user {}".format(word_))
-    return redirect(url_for('users.home', user_id=current_user._id))
+    return redirect(url_for('users.home'))
 
 
 # TODO Find new way to do this (WITHOUT SENDING USER_ID)
 @bp_user.route('/profile/view/<string:user_id>')
 @login_required
-@just_current_user
 def view_profile(user_id):
     user = User.find_by_id(user_id)
     if not User.check_follow_relation(current_user._id, user_id):
         request.form.follow = "Follow"
     else:
         request.form.follow = "Un Follow"
-    return render_template("user/personal_page.html", user=user, user_id=user_id)
+    return render_template("user/personal_page.html", user=user)
 
 
 # TODO Find new way to do this (WITHOUT SENDING USER_ID)
-@bp_user.route('/profile/edit/<string:user_id>')
+@bp_user.route('/profile/edit')
 @login_required
-@just_current_user
-def edit_profile(user_id):
+def edit_profile():
     # TODO Make edit page
-    user = User.find_by_id(user_id)
-    return render_template("user/personal_page.html", user=user, current_user=current_user)
+    return render_template("user/personal_page.html")
 
 
 # TODO Find new way to do this (WITHOUT SENDING USER_EMAIL)
@@ -217,6 +208,5 @@ def follow2(user_id):
 
 @bp_user.route('/feedback')
 @login_required
-@just_current_user
 def feedback():
     return render_template("post/feedback.html")
